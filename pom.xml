@@ -28,7 +28,6 @@
         <module>foodie-api</module>
     </modules>
 
-
     <!-- 搭建一个SpringBoot项目的基础，设置parent为：spring-boot-starter-parent    -->
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -44,7 +43,34 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
     </properties>
+
+    <dependencies>
+
+        <dependency>
+            <!-- 注意的是：这里添加的关于spring-boot-starter相关的依赖，
+            都是没有设置版本号的，因为在parent父级项目中，已经有统一的设置       -->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <!--  不使用默认的日志系统，将其排查          -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <!-- 为springboot添加web依赖，是标准设置          -->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <!-- springboot 默认解析的配置文件是yaml格式，如果要添加xml、properties配置文件，就需要添加这个           -->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
 
 </project>
