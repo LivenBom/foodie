@@ -47,12 +47,17 @@
 
     <dependencies>
 
+        <!--  SpringBoot      -->
         <dependency>
-            <!-- 注意的是：这里添加的关于spring-boot-starter相关的依赖，
-            都是没有设置版本号的，因为在parent父级项目中，已经有统一的设置       -->
+            <!--
+                1.  注意的是：这里添加的关于spring-boot-starter相关的依赖，
+                    都是没有设置版本号的，因为在parent父级项目中，已经有统一的设置
+                2.  是构建SpringBoot项目的基础依赖，包含了SpringBoot项目的基础功能
+                    专为简化SpringBoot项目的配置和依赖管理设计
+            -->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <!--  不使用默认的日志系统，将其排查          -->
+            <!--  不使用默认的日志系统，将其排除          -->
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -61,12 +66,22 @@
             </exclusions>
         </dependency>
         <dependency>
-            <!-- 为springboot添加web依赖，是标准设置          -->
+            <!--
+                用于在Java项目中包含SpringBoot的Web模块
+                用于开发web应用和RESTful 服务的一个便捷方式，包含这个依赖能够快速构建基于SpringMVC的应用程序
+                支持包括REST API, SpringMVC 和 默认的Tomcat容器在内的功能
+            -->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <!-- springboot 默认解析的配置文件是yaml格式，如果要添加xml、properties配置文件，就需要添加这个           -->
+            <!--
+                 是应用于SpringBoot项目的一个依赖，用于解析配置文件
+                 主要用于处理application.properties和application.yml文件
+                 1. 自动扫描项目中所有的@ConfigurationProperties注解的类，生成配置元数据文件，是IDE能够提供自动补全、文件悬停描述和检验功能
+                 2. 通过生成的配置元数据，开发者在编写application.properties和application.yml文件时，IDE能够提供自动补全、文件悬停描述和检验功能
+                 3. 开发者定义自己的配置属性类时，使用@ConfigurationProperties注解
+             -->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
