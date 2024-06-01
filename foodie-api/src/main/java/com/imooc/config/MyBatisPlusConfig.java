@@ -16,7 +16,10 @@ public class MyBatisPlusConfig {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         // 分页插件
         PaginationInnerInterceptor pageInnerInterceptor = new PaginationInnerInterceptor(DbType.MYSQL);
+        // 乐观锁插件
+        OptimisticLockerInnerInterceptor lockerInnerInterceptor = new OptimisticLockerInnerInterceptor();
         interceptor.addInnerInterceptor(pageInnerInterceptor);
+        interceptor.addInnerInterceptor(lockerInnerInterceptor);
         return new MybatisPlusInterceptor();
     }
 }
