@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imooc.mapper.ItemsParamMapper">
+
+    <resultMap id="BaseResultMap" type="com.imooc.pojo.ItemsParam">
+            <id property="id" column="id" jdbcType="VARCHAR"/>
+            <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+            <result property="producPlace" column="produc_place" jdbcType="VARCHAR"/>
+            <result property="footPeriod" column="foot_period" jdbcType="VARCHAR"/>
+            <result property="brand" column="brand" jdbcType="VARCHAR"/>
+            <result property="factoryName" column="factory_name" jdbcType="VARCHAR"/>
+            <result property="factoryAddress" column="factory_address" jdbcType="VARCHAR"/>
+            <result property="packagingMethod" column="packaging_method" jdbcType="VARCHAR"/>
+            <result property="weight" column="weight" jdbcType="VARCHAR"/>
+            <result property="storageMethod" column="storage_method" jdbcType="VARCHAR"/>
+            <result property="eatMethod" column="eat_method" jdbcType="VARCHAR"/>
+            <result property="createdTime" column="created_time" jdbcType="TIMESTAMP"/>
+            <result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,item_id,produc_place,
+        foot_period,brand,factory_name,
+        factory_address,packaging_method,weight,
+        storage_method,eat_method,created_time,
+        updated_time
+    </sql>
+</mapper>

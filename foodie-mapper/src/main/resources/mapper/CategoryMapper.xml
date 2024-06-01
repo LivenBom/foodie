@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imooc.mapper.CategoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.imooc.pojo.Category">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="type" column="type" jdbcType="INTEGER"/>
+            <result property="fatherId" column="father_id" jdbcType="INTEGER"/>
+            <result property="logo" column="logo" jdbcType="VARCHAR"/>
+            <result property="slogan" column="slogan" jdbcType="VARCHAR"/>
+            <result property="catImage" column="cat_image" jdbcType="VARCHAR"/>
+            <result property="bgColor" column="bg_color" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,type,
+        father_id,logo,slogan,
+        cat_image,bg_color
+    </sql>
+</mapper>
