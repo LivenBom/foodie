@@ -1,5 +1,6 @@
 package com.imooc;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -14,6 +15,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 * @ComponentScan：
 *   告诉Spring在哪里寻找其他的应用组件，通常是使用@Component，@Service，@Controller等注解的类
 * */
+
+// MyBatis: 扫描mapper接口所在的
+@MapperScan("com.imooc.mapper")
 @SpringBootApplication
 public class Application {
     // main是Java应用的入口

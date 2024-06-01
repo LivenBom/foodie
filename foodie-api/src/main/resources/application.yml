@@ -20,7 +20,7 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/foodie?useUnicode=true&characterEncoding=utf8&useSSL=false
+    url: jdbc:mysql://localhost:3306/foodie?serverTimezone=GMT%2B8&characterEncoding=utf8&useSSL=false
     username: root
     password: qianli01
     hikari:
@@ -43,3 +43,15 @@ spring:
 mybatis:
   type-aliases-package: com.imooc.pojo        # 所有POJO类所在路径
   mapper-locations: classpath:mapper/*.xml    # classpath就是指resources文件夹路径，告诉mybatis mapper文件的位置
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # 打印sql语句
+  global-config:
+    db-config:
+      # 配置主键策略：数据库自增（默认是雪花算法）
+      # 雪花算法更适合分布式系统，但是在单体应用中，数据库自增更方便
+      id-type: auto
+  # 配置类型别名所对应的包
+  # 处理Mapper.xml中的resultType，这样就可以直接使用类名作为别名，而不需要写全类名
+  type-aliases-package: com.imooc.pojo
