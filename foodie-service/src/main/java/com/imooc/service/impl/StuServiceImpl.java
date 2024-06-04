@@ -5,6 +5,8 @@ import com.imooc.pojo.Stu;
 import com.imooc.service.StuService;
 import com.imooc.mapper.StuMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
 * @author liven
@@ -15,6 +17,11 @@ import org.springframework.stereotype.Service;
 public class StuServiceImpl extends ServiceImpl<StuMapper, Stu>
     implements StuService{
 
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public Stu getStuInfo(String id) {
+        return this.getById(id);
+    }
 }
 
 

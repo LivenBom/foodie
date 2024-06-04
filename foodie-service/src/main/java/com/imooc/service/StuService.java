@@ -9,5 +9,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2024-06-01 22:56:20
 */
 public interface StuService extends IService<Stu> {
-
+    public Stu getStuInfo(String id);
 }
