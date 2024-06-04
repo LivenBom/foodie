@@ -92,19 +92,29 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.32</version>
+            <version>8.0.33</version>
         </dependency>
-        <!-- Mybatis       -->
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>3.0.2</version>
-        </dependency>
-        <!-- Mybatis Plus     -->
+        <!-- Mybatis 及 Mybatis-plus       -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.5.6</version>
+            <!--
+                由于mybatis-plus依赖的mybatis-spring版本不兼容，导致会报：
+                Invalid value type for attribute 'factoryBeanObjectType: java.lang.String' of type 'java.lang.Class<java.lang.String>
+                因此单独依赖mybatis-spring，并设置为最新版本
+             -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mybatis</groupId>
+                    <artifactId>mybatis-spring</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>3.0.3</version>
         </dependency>
         <!--  lombok 用于简化实体类开发     -->
         <dependency>
