@@ -20,6 +20,6 @@ public class MyBatisPlusConfig {
         OptimisticLockerInnerInterceptor lockerInnerInterceptor = new OptimisticLockerInnerInterceptor();
         interceptor.addInnerInterceptor(pageInnerInterceptor);
         interceptor.addInnerInterceptor(lockerInnerInterceptor);
-        return new MybatisPlusInterceptor();
+        return interceptor;
     }
 }
