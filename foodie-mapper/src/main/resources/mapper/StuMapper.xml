@@ -10,6 +10,19 @@
             <result property="age" column="age" jdbcType="INTEGER"/>
     </resultMap>
 
+    <!--
+     通过这个 <sql> 标签定义的是一组基础的列名列表，它通常包含了表中的主要字段
+     定义SQL片段后，可以在其他的SQL映射语句总通过引用<sql>片段来使用这些列名，
+     可以减少代码重复性，减少字段名更改导致的错误。比如下面的例子：
+      <select id="selectUser" resultType="User">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            users
+        WHERE
+            id = #{id}
+    </select>
+      -->
     <sql id="Base_Column_List">
         id,name,age
     </sql>
