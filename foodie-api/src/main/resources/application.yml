@@ -49,9 +49,9 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # 打印sql语句
   global-config:
     db-config:
-      # 配置主键策略：数据库自增（默认是雪花算法）
+      # 配置主键策略：数据库自增（默认是雪花算法：ASSIGN_ID）
       # 雪花算法更适合分布式系统，但是在单体应用中，数据库自增更方便
-      id-type: auto
+      id-type: ASSIGN_UUID
   # 配置类型别名所对应的包
   # 处理Mapper.xml中的resultType，这样就可以直接使用类名作为别名，而不需要写全类名
 #  type-aliases-package: com.imooc.pojo

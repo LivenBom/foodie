@@ -2,6 +2,7 @@ package com.imooc.service;
 
 import com.imooc.pojo.Users;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.imooc.pojo.bo.UserBO;
 
 /**
 * @author liven
@@ -14,4 +15,9 @@ public interface UsersService extends IService<Users> {
     * 判断用户名是否存在
     * */
     public boolean queryUsernameIsExist(String username);
+
+    /*
+    * 注册新用户
+    * */
+    public Users createUser(UserBO userBO);
 }

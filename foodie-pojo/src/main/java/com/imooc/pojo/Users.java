@@ -1,11 +1,11 @@
 package com.imooc.pojo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.util.Date;
+
+import com.imooc.enums.Sex;
 import lombok.Data;
 
 /**
@@ -59,7 +59,7 @@ public class Users implements Serializable {
     /**
      * 性别 性别 1:男  0:女  2:保密
      */
-    private Integer sex;
+    private Sex sex;
 
     /**
      * 生日 生日
@@ -68,12 +68,16 @@ public class Users implements Serializable {
 
     /**
      * 创建时间 创建时间
+     * MyBatis-plus功能：FieldFill.INSERT 代表插入时填充字段
      */
+    @TableField(fill = FieldFill.INSERT)
     private Date createdTime;
 
     /**
      * 更新时间 更新时间
+     * MyBatis-plus功能：FieldFill.INSERT_UPDATE 代表插入和更新时填充字段
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updatedTime;
 
     @TableField(exist = false)
