@@ -87,6 +87,14 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- SpringBoot 单元测试模块        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>3.3.0</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- 数据源驱动与MyBatis依赖       -->
         <!-- MySql驱动       -->
         <dependency>
@@ -94,6 +102,7 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.33</version>
         </dependency>
+
         <!-- Mybatis 及 Mybatis-plus       -->
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -116,6 +125,8 @@
             <artifactId>mybatis-spring</artifactId>
             <version>3.0.3</version>
         </dependency>
+
+
         <!--  lombok 用于简化实体类开发     -->
         <dependency>
             <groupId>org.projectlombok</groupId>
