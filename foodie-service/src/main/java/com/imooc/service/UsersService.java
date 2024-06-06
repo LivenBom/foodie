@@ -10,4 +10,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface UsersService extends IService<Users> {
 
+    /*
+    * 判断用户名是否存在
+    * */
+    public boolean queryUsernameIsExist(String username);
 }
