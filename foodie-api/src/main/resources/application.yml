@@ -34,7 +34,6 @@ spring:
       connection-test-query: SELECT 1 # 测试SQL
 
 
-
 ################################################################
 #
 # mybatis 配置
@@ -55,3 +54,18 @@ mybatis-plus:
   # 配置类型别名所对应的包
   # 处理Mapper.xml中的resultType，这样就可以直接使用类名作为别名，而不需要写全类名
 #  type-aliases-package: com.imooc.pojo
+
+
+
+################################################################
+#
+# knife4j 配置
+#
+################################################################
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+springdoc:
+  api-docs:
+    path: /v3/api-docs

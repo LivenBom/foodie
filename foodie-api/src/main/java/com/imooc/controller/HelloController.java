@@ -1,5 +1,6 @@
 package com.imooc.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 *   @RestController是一个组合注解，包含了@Controller和@ResponseBody注解
 *   专为RESTful Web服务设计，适合服务API接口，返回的是数据（如JSON和XML），而不是视图
 * */
+@Hidden
 @RestController
 public class HelloController {
     @GetMapping("/hello")

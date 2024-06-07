@@ -1,15 +1,15 @@
 package com.imooc.controller;
 
-import com.imooc.pojo.Stu;
 import com.imooc.pojo.bo.UserBO;
-import com.imooc.service.StuService;
 import com.imooc.service.UsersService;
 import com.imooc.utils.IMOOCJSONResult;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+@Tags({@Tag(name = "登录注册相关的接口")})
 @RestController
 @RequestMapping("/passport")
 public class PassportController {

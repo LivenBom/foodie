@@ -152,6 +152,17 @@
             <version>3.14.0</version>
         </dependency>
 
+        <!-- knife4j 文档API库       -->
+        <!--
+            由于SpringBoot3之后的版本将javax.servlet.http.HttpServletRequest替换成
+            jakarta.servlet.http.HttpServletRequest，所以不能使用Swagger2了，使用增强版的knife4j来代替
+        -->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+            <version>4.5.0</version>
+        </dependency>
+
     </dependencies>
 
 </project>
