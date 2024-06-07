@@ -55,6 +55,16 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users>
         baseMapper.insert(user);
         return user;
     }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public Users queryUserForLogin(String username, String password) {
+        LambdaQueryWrapper<Users> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper
+                .eq(Users::getUsername, username)
+                .eq(Users::getPassword, password);
+        return baseMapper.selectOne(queryWrapper);
+    }
 }
 
 
