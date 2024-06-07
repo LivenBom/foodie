@@ -3,10 +3,14 @@ package com.imooc.controller;
 import com.imooc.pojo.Users;
 import com.imooc.pojo.bo.UserBO;
 import com.imooc.service.UsersService;
+import com.imooc.utils.CookieUtils;
 import com.imooc.utils.IMOOCJSONResult;
+import com.imooc.utils.JsonUtils;
 import com.imooc.utils.MD5Utils;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +41,9 @@ public class PassportController {
     }
 
     @PostMapping("/regist")
-    public IMOOCJSONResult regist(@RequestBody UserBO userBO) {
+    public IMOOCJSONResult regist(@RequestBody UserBO userBO,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response) {
         String username = userBO.getUsername();
         String password = userBO.getPassword();
         String confirmPassword = userBO.getConfirmPassword();
@@ -66,12 +72,22 @@ public class PassportController {
         }
 
         // 5. 实现注册
-        usersService.createUser(userBO);
+        Users userResult = usersService.createUser(userBO);
+
+        // 6. 移除用户敏感信息
+        userResult = setNullProperty(userResult);
+
+        // 7. 设置cookie
+        // 这样网页前端就能通过cookie获取到登录的用户信息，保存登录的状态
+        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
+
         return IMOOCJSONResult.ok();
     }
 
     @PostMapping("/login")
-    public IMOOCJSONResult login(@RequestBody UserBO userBO) throws Exception {
+    public IMOOCJSONResult login(@RequestBody UserBO userBO,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response) throws Exception {
         String username = userBO.getUsername();
         String password = userBO.getPassword();
         // 1. 判断用户名和密码必须不为空
@@ -91,6 +107,24 @@ public class PassportController {
             return IMOOCJSONResult.errorMsg("用户名或密码不正确");
         }
 
+        // 3. 移除用户敏感信息
+        userResult = setNullProperty(userResult);
+
+        // 4. 设置cookie
+        // 这样网页前端就能通过cookie获取到登录的用户信息，保存登录的状态
+        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
+
         return IMOOCJSONResult.ok(userResult);
     }
+
+    private Users setNullProperty(Users userResult) {
+        userResult.setPassword(null);
+        userResult.setMobile(null);
+        userResult.setEmail(null);
+        userResult.setCreatedTime(null);
+        userResult.setUpdatedTime(null);
+        userResult.setBirthday(null);
+        return userResult;
+    }
+
 }
