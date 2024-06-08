@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.imooc.enums.YesOrNo;
 import lombok.Data;
 
 /**
@@ -54,7 +56,7 @@ public class Carousel implements Serializable {
     /**
      * 是否展示
      */
-    private Integer isShow;
+    private YesOrNo isShow;
 
     /**
      * 创建时间 创建时间
