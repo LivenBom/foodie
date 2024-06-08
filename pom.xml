@@ -100,6 +100,13 @@
             <optional>true</optional>
         </dependency>
 
+        <!--  AOP      -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+
         <!-- SpringBoot 单元测试模块        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
