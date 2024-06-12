@@ -20,4 +20,47 @@
         father_id,logo,slogan,
         cat_image,bg_color
     </sql>
+
+
+    <resultMap id="myCategoryVO" type="com.imooc.pojo.vo.CategoryVO">
+        <!--
+            property 实体属性名；
+            column 数据库表字段名；
+            jdbcType 可以省略不写    -->
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="fatherId" column="fatherId"/>
+
+        <!--
+            collection 标签：
+            property：实体类中的集合属性名；
+            ofType：集合中元素的类型；    -->
+        <collection property="subCatList" ofType="com.imooc.pojo.vo.SubCategoryVO">
+            <id property="subId" column="subId"/>
+            <result property="subName" column="subName"/>
+            <result property="subType" column="subType"/>
+            <result property="subFatherId" column="subFatherId"/>
+        </collection>
+    </resultMap>
+
+    <select id="getSubCatList" resultMap="myCategoryVO" parameterType="int">
+        SELECT
+            f.id as id,
+            f.`name` as `name`,
+            f.type as type,
+            f.father_id as fatherId,
+            c.id as subId,
+            c.`name` as subName,
+            c.type as subType,
+            c.father_id as subFatherId
+        FROM
+            category f
+                LEFT JOIN
+            category c
+            ON
+                f.id = c.father_id
+        WHERE
+            f.father_id = #{rootCatId}
+    </select>
 </mapper>

@@ -2,6 +2,10 @@ package com.imooc.mapper;
 
 import com.imooc.pojo.Category;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.imooc.pojo.vo.CategoryVO;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author liven
@@ -11,6 +15,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface CategoryMapper extends BaseMapper<Category> {
 
+    List<CategoryVO> getSubCatList(@Param("rootCatId")  Integer rootCatId);
 }
 
 
