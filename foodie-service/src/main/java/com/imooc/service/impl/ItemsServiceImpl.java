@@ -2,15 +2,11 @@ package com.imooc.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.imooc.mapper.ItemsImgMapper;
-import com.imooc.mapper.ItemsParamMapper;
-import com.imooc.mapper.ItemsSpecMapper;
-import com.imooc.pojo.Items;
-import com.imooc.pojo.ItemsImg;
-import com.imooc.pojo.ItemsParam;
-import com.imooc.pojo.ItemsSpec;
+import com.imooc.enums.CommentLevel;
+import com.imooc.mapper.*;
+import com.imooc.pojo.*;
+import com.imooc.pojo.vo.CommentLevelCountsVO;
 import com.imooc.service.ItemsService;
-import com.imooc.mapper.ItemsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -31,6 +27,8 @@ public class ItemsServiceImpl extends ServiceImpl<ItemsMapper, Items>
     private ItemsSpecMapper itemsSpecMapper;
     @Autowired
     private ItemsParamMapper itemsParamMapper;
+    @Autowired
+    private ItemsCommentsMapper itemsCommentsMapper;
 
     @Transactional(propagation = Propagation.SUPPORTS)
     @Override
@@ -60,6 +58,30 @@ public class ItemsServiceImpl extends ServiceImpl<ItemsMapper, Items>
         LambdaQueryWrapper<ItemsParam> queryWrapper = new LambdaQueryWrapper();
         queryWrapper.eq(ItemsParam::getItemId, itemId);
         return itemsParamMapper.selectOne(queryWrapper);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public CommentLevelCountsVO queryCommentCounts(String itemId) {
+        Long goodCounts = getCommentCounts(itemId, CommentLevel.GOOD);
+        Long normalCounts = getCommentCounts(itemId, CommentLevel.NORMAL);
+        Long badCounts = getCommentCounts(itemId, CommentLevel.BAD);
+        Long total = goodCounts + normalCounts + badCounts;
+
+        CommentLevelCountsVO commentLevelCountsVO = new CommentLevelCountsVO();
+        commentLevelCountsVO.setTotalCounts(total);
+        commentLevelCountsVO.setGoodCounts(goodCounts);
+        commentLevelCountsVO.setNormalCounts(normalCounts);
+        commentLevelCountsVO.setBadCounts(badCounts);
+        return commentLevelCountsVO;
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public Long getCommentCounts(String itemId, CommentLevel level) {
+        LambdaQueryWrapper<ItemsComments> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ItemsComments::getItemId, itemId);
+        queryWrapper.eq(level != null, ItemsComments::getCommentLevel, level.type);
+        return itemsCommentsMapper.selectCount(queryWrapper);
     }
 }
 

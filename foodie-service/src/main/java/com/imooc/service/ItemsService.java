@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.imooc.pojo.ItemsImg;
 import com.imooc.pojo.ItemsParam;
 import com.imooc.pojo.ItemsSpec;
+import com.imooc.pojo.vo.CommentLevelCountsVO;
 
 import java.util.List;
 
@@ -38,4 +39,9 @@ public interface ItemsService extends IService<Items> {
     * */
     public ItemsParam queryItemParam(String itemId);
 
+
+    /*
+    * 查询商品的评价等级数量
+    * */
+    public CommentLevelCountsVO queryCommentCounts(String itemId);
 }
