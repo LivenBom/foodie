@@ -6,6 +6,7 @@ import com.imooc.pojo.vo.CategoryVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author liven
@@ -16,6 +17,8 @@ import java.util.List;
 public interface CategoryMapper extends BaseMapper<Category> {
 
     List<CategoryVO> getSubCatList(@Param("rootCatId")  Integer rootCatId);
+
+    List getSixNewItemsLazy(@Param("paramsMap") Map<String, Object> map);
 }
 
 

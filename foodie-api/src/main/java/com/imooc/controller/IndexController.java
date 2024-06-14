@@ -2,9 +2,9 @@ package com.imooc.controller;
 
 import com.imooc.enums.YesOrNo;
 import com.imooc.pojo.vo.CategoryVO;
+import com.imooc.pojo.vo.NewItemsVO;
 import com.imooc.service.CarouselService;
 import com.imooc.service.CategoryService;
-import com.imooc.service.UsersService;
 import com.imooc.utils.IMOOCJSONResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +51,19 @@ public class IndexController {
             return IMOOCJSONResult.errorMsg("分类不存在");
         }
         List<CategoryVO> list = categoryService.getSubCatList(rootCatId);
+        return IMOOCJSONResult.ok(list);
+    }
+
+
+    /*
+    * 查询每个一级分类下的最新6条商品数据
+    * */
+    @GetMapping("/sixNewItems/{rootCatId}")
+    public IMOOCJSONResult sixNewItems(@PathVariable Integer rootCatId) {
+        if (rootCatId == null) {
+            return IMOOCJSONResult.errorMsg("分类不存在");
+        }
+        List<NewItemsVO> list = categoryService.getSixNewItemsLazy(rootCatId);
         return IMOOCJSONResult.ok(list);
     }
 
