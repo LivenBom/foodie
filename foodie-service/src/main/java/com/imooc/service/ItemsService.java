@@ -1,11 +1,14 @@
 package com.imooc.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.imooc.pojo.Items;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.imooc.pojo.ItemsImg;
 import com.imooc.pojo.ItemsParam;
 import com.imooc.pojo.ItemsSpec;
 import com.imooc.pojo.vo.CommentLevelCountsVO;
+import com.imooc.pojo.vo.ItemCommentVO;
 
 import java.util.List;
 
@@ -44,4 +47,10 @@ public interface ItemsService extends IService<Items> {
     * 查询商品的评价等级数量
     * */
     public CommentLevelCountsVO queryCommentCounts(String itemId);
+
+
+    /*
+    * 查询商品的评价（支持分页）
+    * */
+    public IPage<ItemCommentVO> queryPagedComments(String itemId, Integer level, Integer page, Integer pageSize);
 }

@@ -1,17 +1,23 @@
 package com.imooc.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.imooc.enums.CommentLevel;
 import com.imooc.mapper.*;
 import com.imooc.pojo.*;
 import com.imooc.pojo.vo.CommentLevelCountsVO;
+import com.imooc.pojo.vo.ItemCommentVO;
 import com.imooc.service.ItemsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author liven
@@ -82,6 +88,18 @@ public class ItemsServiceImpl extends ServiceImpl<ItemsMapper, Items>
         queryWrapper.eq(ItemsComments::getItemId, itemId);
         queryWrapper.eq(level != null, ItemsComments::getCommentLevel, level.type);
         return itemsCommentsMapper.selectCount(queryWrapper);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public IPage<ItemCommentVO> queryPagedComments(String itemId, Integer level, Integer page, Integer pageSize) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("itemId", itemId);
+        map.put("level", level);
+
+        // page 是当前的页码，pageSize 是每页显示的条数
+        Page<ItemCommentVO> pageItem = new Page<>(page, pageSize);
+        return baseMapper.queryItemComments(pageItem, map);
     }
 }
 

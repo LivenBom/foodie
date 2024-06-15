@@ -1,14 +1,13 @@
 package com.imooc.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.imooc.enums.YesOrNo;
 import com.imooc.pojo.Items;
 import com.imooc.pojo.ItemsImg;
 import com.imooc.pojo.ItemsParam;
 import com.imooc.pojo.ItemsSpec;
-import com.imooc.pojo.vo.CategoryVO;
-import com.imooc.pojo.vo.CommentLevelCountsVO;
-import com.imooc.pojo.vo.ItemInfoVO;
-import com.imooc.pojo.vo.NewItemsVO;
+import com.imooc.pojo.vo.*;
 import com.imooc.service.CarouselService;
 import com.imooc.service.CategoryService;
 import com.imooc.service.ItemsService;
@@ -56,4 +55,15 @@ public class ItemsController {
         return IMOOCJSONResult.ok(countsVO);
     }
 
+    @GetMapping("/comments")
+    public IMOOCJSONResult comments(@RequestParam String itemId,
+                                    @RequestParam(required = false) Integer level,
+                                    @RequestParam(defaultValue = "1") Integer page,
+                                    @RequestParam(defaultValue = "20") Integer pageSize) {
+        if (StringUtils.isBlank(itemId)) {
+            return IMOOCJSONResult.errorMsg("");
+        }
+        IPage<ItemCommentVO> comments = itemsService.queryPagedComments(itemId, level, page, pageSize);
+        return IMOOCJSONResult.ok(comments);
+    }
 }

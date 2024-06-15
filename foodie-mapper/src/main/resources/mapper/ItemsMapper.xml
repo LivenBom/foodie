@@ -21,4 +21,29 @@
         root_cat_id,sell_counts,on_off_status,
         content,created_time,updated_time
     </sql>
+
+
+    <select id="queryItemComments" resultType="com.imooc.pojo.vo.ItemCommentVO" parameterType="Map">
+        SELECT
+            ic.comment_level as commentLevel,
+            ic.item_id as itemId,
+            ic.sepc_name as specName,
+            ic.content as content,
+            ic.created_time as createdTime,
+            u.username as userName,
+            u.id as userId,
+            u.face as userImage
+        FROM
+            items_comments ic
+        LEFT JOIN
+            users u
+        ON
+            ic.user_id = u.id
+        WHERE
+            ic.item_id = #{paramsMap.itemId}
+          <if test="paramsMap.level != null and paramsMap.level != ''">
+              AND ic.comment_level = #{paramsMap.level}
+          </if>
+
+    </select>
 </mapper>
