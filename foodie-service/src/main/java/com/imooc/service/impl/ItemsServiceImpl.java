@@ -10,6 +10,7 @@ import com.imooc.pojo.*;
 import com.imooc.pojo.vo.CommentLevelCountsVO;
 import com.imooc.pojo.vo.ItemCommentVO;
 import com.imooc.service.ItemsService;
+import com.imooc.utils.DesensitizationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -99,7 +100,12 @@ public class ItemsServiceImpl extends ServiceImpl<ItemsMapper, Items>
 
         // page 是当前的页码，pageSize 是每页显示的条数
         Page<ItemCommentVO> pageItem = new Page<>(page, pageSize);
-        return baseMapper.queryItemComments(pageItem, map);
+        Page<ItemCommentVO> results = baseMapper.queryItemComments(pageItem, map);
+        // 脱敏设置（隐私保护，不显示全称）
+        results.getRecords().forEach(vo -> {
+            vo.setNickname(DesensitizationUtil.commonDisplay(vo.getNickname()));
+        });
+        return results;
     }
 }
 
