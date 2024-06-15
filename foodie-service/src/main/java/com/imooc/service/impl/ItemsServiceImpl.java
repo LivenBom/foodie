@@ -9,6 +9,7 @@ import com.imooc.mapper.*;
 import com.imooc.pojo.*;
 import com.imooc.pojo.vo.CommentLevelCountsVO;
 import com.imooc.pojo.vo.ItemCommentVO;
+import com.imooc.pojo.vo.SearchItemVO;
 import com.imooc.service.ItemsService;
 import com.imooc.utils.DesensitizationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,6 +107,17 @@ public class ItemsServiceImpl extends ServiceImpl<ItemsMapper, Items>
             vo.setNickname(DesensitizationUtil.commonDisplay(vo.getNickname()));
         });
         return results;
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public IPage<SearchItemVO> searchItems(String keywords, String sort, Integer page, Integer pageSize) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("keywords", keywords);
+        map.put("sort", sort);
+
+        Page<SearchItemVO> pageItem = new Page<>(page, pageSize);
+        return baseMapper.searchItems(pageItem, map);
     }
 }
 

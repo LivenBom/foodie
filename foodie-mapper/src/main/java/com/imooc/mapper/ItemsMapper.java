@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.imooc.pojo.Items;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.imooc.pojo.vo.ItemCommentVO;
+import com.imooc.pojo.vo.SearchItemVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -19,6 +20,9 @@ public interface ItemsMapper extends BaseMapper<Items> {
 
     public Page<ItemCommentVO> queryItemComments(Page<ItemCommentVO> page,
                                                  @Param("paramsMap") Map<String, Object> map);
+
+    public Page<SearchItemVO> searchItems(Page<SearchItemVO> page,
+                                          @Param("paramsMap") Map<String, Object> map);
 }
 
 

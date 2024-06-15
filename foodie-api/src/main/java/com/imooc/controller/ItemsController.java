@@ -66,4 +66,16 @@ public class ItemsController {
         IPage<ItemCommentVO> comments = itemsService.queryPagedComments(itemId, level, page, pageSize);
         return IMOOCJSONResult.ok(comments);
     }
+
+    @GetMapping("/search")
+    public IMOOCJSONResult search(@RequestParam String keywords,
+                                  @RequestParam(defaultValue = "k") String sort,
+                                  @RequestParam(defaultValue = "1") Integer page,
+                                  @RequestParam(defaultValue = "20") Integer pageSize) {
+        if (StringUtils.isBlank(keywords)) {
+            return IMOOCJSONResult.errorMsg("");
+        }
+        IPage<SearchItemVO> comments = itemsService.searchItems(keywords, sort, page, pageSize);
+        return IMOOCJSONResult.ok(comments);
+    }
 }

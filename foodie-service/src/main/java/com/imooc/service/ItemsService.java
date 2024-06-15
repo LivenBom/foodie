@@ -9,6 +9,7 @@ import com.imooc.pojo.ItemsParam;
 import com.imooc.pojo.ItemsSpec;
 import com.imooc.pojo.vo.CommentLevelCountsVO;
 import com.imooc.pojo.vo.ItemCommentVO;
+import com.imooc.pojo.vo.SearchItemVO;
 
 import java.util.List;
 
@@ -53,4 +54,10 @@ public interface ItemsService extends IService<Items> {
     * 查询商品的评价（支持分页）
     * */
     public IPage<ItemCommentVO> queryPagedComments(String itemId, Integer level, Integer page, Integer pageSize);
+
+
+    /*
+    * 商品搜索
+    * */
+    public IPage<SearchItemVO> searchItems(String keywords, String sort, Integer page, Integer pageSize);
 }
