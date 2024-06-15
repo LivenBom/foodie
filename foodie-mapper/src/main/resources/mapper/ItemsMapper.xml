@@ -30,9 +30,9 @@
             ic.sepc_name as specName,
             ic.content as content,
             ic.created_time as createdTime,
-            u.username as userName,
+            u.username as nickname,
             u.id as userId,
-            u.face as userImage
+            u.face as userFace
         FROM
             items_comments ic
         LEFT JOIN
