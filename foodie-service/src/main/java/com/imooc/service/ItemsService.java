@@ -60,4 +60,10 @@ public interface ItemsService extends IService<Items> {
     * 商品搜索
     * */
     public IPage<SearchItemVO> searchItems(String keywords, String sort, Integer page, Integer pageSize);
+
+
+    /*
+    * 根据分类id搜索商品列表
+    * */
+    public IPage<SearchItemVO> searchItemsByThirdCat(Integer catId, String sort, Integer page, Integer pageSize);
 }

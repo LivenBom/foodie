@@ -23,6 +23,9 @@ public interface ItemsMapper extends BaseMapper<Items> {
 
     public Page<SearchItemVO> searchItems(Page<SearchItemVO> page,
                                           @Param("paramsMap") Map<String, Object> map);
+
+    public Page<SearchItemVO> searchItemsByThirdCat(Page<SearchItemVO> page,
+                                                    @Param("paramsMap") Map<String, Object> map);
 }
 
 

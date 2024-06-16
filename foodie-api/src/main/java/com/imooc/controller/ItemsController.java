@@ -75,7 +75,19 @@ public class ItemsController {
         if (StringUtils.isBlank(keywords)) {
             return IMOOCJSONResult.errorMsg("");
         }
-        IPage<SearchItemVO> comments = itemsService.searchItems(keywords, sort, page, pageSize);
-        return IMOOCJSONResult.ok(comments);
+        IPage<SearchItemVO> items = itemsService.searchItems(keywords, sort, page, pageSize);
+        return IMOOCJSONResult.ok(items);
+    }
+
+    @GetMapping("/catItems")
+    public IMOOCJSONResult catItems(@RequestParam Integer catId,
+                                    @RequestParam(defaultValue = "k") String sort,
+                                    @RequestParam(defaultValue = "1") Integer page,
+                                    @RequestParam(defaultValue = "20") Integer pageSize) {
+        if (catId == null) {
+            return IMOOCJSONResult.errorMsg("");
+        }
+        IPage<SearchItemVO> items = itemsService.searchItemsByThirdCat(catId, sort, page, pageSize);
+        return IMOOCJSONResult.ok(items);
     }
 }

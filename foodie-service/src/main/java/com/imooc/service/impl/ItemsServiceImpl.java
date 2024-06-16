@@ -119,6 +119,17 @@ public class ItemsServiceImpl extends ServiceImpl<ItemsMapper, Items>
         Page<SearchItemVO> pageItem = new Page<>(page, pageSize);
         return baseMapper.searchItems(pageItem, map);
     }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public IPage<SearchItemVO> searchItemsByThirdCat(Integer catId, String sort, Integer page, Integer pageSize) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("catId", catId);
+        map.put("sort", sort);
+
+        Page<SearchItemVO> pageItem = new Page<>(page, pageSize);
+        return baseMapper.searchItemsByThirdCat(pageItem, map);
+    }
 }
 
 
