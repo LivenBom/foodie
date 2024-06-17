@@ -127,4 +127,34 @@
 
     </select>
 
+
+    <select id="queryItemsBySpecIds" parameterType="List" resultType="com.imooc.pojo.vo.ShopcarVO">
+        SELECT
+            t_items.id as itemId,
+            t_items.item_name as itemName,
+            t_img.url as itemImgUrl,
+            t_spec.id as specId,
+            t_spec.`name` as specName,
+            t_spec.price_discount as priceDiscount,
+            t_spec.price_normal as priceNormal
+        FROM
+            items_spec t_spec
+        LEFT JOIN
+            items t_items
+        ON
+            t_items.id = t_spec.item_id
+        LEFT JOIN
+            items_img t_img
+        ON
+            t_items.id = t_img.item_id
+        WHERE
+            t_img.is_main = 1
+          AND
+            t_spec.id
+            IN
+            <foreach collection="paramsList" index="index" item="specId" open="(" close=")" separator=",">
+                #{specId}
+            </foreach>
+    </select>
+
 </mapper>

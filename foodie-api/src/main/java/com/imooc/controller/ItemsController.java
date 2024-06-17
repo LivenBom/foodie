@@ -90,4 +90,14 @@ public class ItemsController {
         IPage<SearchItemVO> items = itemsService.searchItemsByThirdCat(catId, sort, page, pageSize);
         return IMOOCJSONResult.ok(items);
     }
+
+    // 用于用户长时间未登录网站，刷新购物车中的数据（主要是商品价格）
+    @GetMapping("/refresh")
+    public IMOOCJSONResult refresh(@RequestParam String itemSpecIds) {
+        if (StringUtils.isBlank(itemSpecIds)) {
+            return IMOOCJSONResult.ok();
+        }
+        List<ShopcarVO> items = itemsService.queryItemsBySpecIds(itemSpecIds);
+        return IMOOCJSONResult.ok(items);
+    }
 }

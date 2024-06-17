@@ -5,6 +5,7 @@ import com.imooc.pojo.Items;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.imooc.pojo.vo.ItemCommentVO;
 import com.imooc.pojo.vo.SearchItemVO;
+import com.imooc.pojo.vo.ShopcarVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -26,6 +27,8 @@ public interface ItemsMapper extends BaseMapper<Items> {
 
     public Page<SearchItemVO> searchItemsByThirdCat(Page<SearchItemVO> page,
                                                     @Param("paramsMap") Map<String, Object> map);
+
+    public List<ShopcarVO> queryItemsBySpecIds(@Param("paramsList") List specIdsList);
 }
 
 

@@ -81,6 +81,9 @@ public class PassportController {
         // 这样网页前端就能通过cookie获取到登录的用户信息，保存登录的状态
         CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
 
+        // TODO 生成用户token，存入redis会话
+        // TODO 同步购物车数据
+
         return IMOOCJSONResult.ok();
     }
 
@@ -113,6 +116,9 @@ public class PassportController {
         // 4. 设置cookie
         // 这样网页前端就能通过cookie获取到登录的用户信息，保存登录的状态
         CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
+
+        // TODO 生成用户token，存入redis会话
+        // TODO 同步购物车数据
 
         return IMOOCJSONResult.ok(userResult);
     }

@@ -10,6 +10,7 @@ import com.imooc.pojo.ItemsSpec;
 import com.imooc.pojo.vo.CommentLevelCountsVO;
 import com.imooc.pojo.vo.ItemCommentVO;
 import com.imooc.pojo.vo.SearchItemVO;
+import com.imooc.pojo.vo.ShopcarVO;
 
 import java.util.List;
 
@@ -66,4 +67,10 @@ public interface ItemsService extends IService<Items> {
     * 根据分类id搜索商品列表
     * */
     public IPage<SearchItemVO> searchItemsByThirdCat(Integer catId, String sort, Integer page, Integer pageSize);
+
+
+    /*
+     * 根据规格ids查询最新购物车中商品数据（用于刷新渲染购物车中的商品数据）
+     * */
+    public List<ShopcarVO> queryItemsBySpecIds(String specIds);
 }

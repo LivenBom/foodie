@@ -10,6 +10,7 @@ import com.imooc.pojo.*;
 import com.imooc.pojo.vo.CommentLevelCountsVO;
 import com.imooc.pojo.vo.ItemCommentVO;
 import com.imooc.pojo.vo.SearchItemVO;
+import com.imooc.pojo.vo.ShopcarVO;
 import com.imooc.service.ItemsService;
 import com.imooc.utils.DesensitizationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,6 +130,14 @@ public class ItemsServiceImpl extends ServiceImpl<ItemsMapper, Items>
 
         Page<SearchItemVO> pageItem = new Page<>(page, pageSize);
         return baseMapper.searchItemsByThirdCat(pageItem, map);
+    }
+
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public List<ShopcarVO> queryItemsBySpecIds(String specIds) {
+        String[] ids = specIds.split(",");
+        return baseMapper.queryItemsBySpecIds(List.of(ids));
     }
 }
 
