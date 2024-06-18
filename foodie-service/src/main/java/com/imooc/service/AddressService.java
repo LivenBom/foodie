@@ -29,4 +29,9 @@ public interface AddressService extends IService<UserAddress> {
     * 修改用户地址信息
     * */
     public void updateUserAddress(AddressBO addressBO);
+
+    /*
+    * 删除用户地址信息
+    * */
+    public void deleteUserAddress(String userId, String addressId);
 }

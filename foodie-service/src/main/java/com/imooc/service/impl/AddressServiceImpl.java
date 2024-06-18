@@ -58,6 +58,14 @@ public class AddressServiceImpl extends ServiceImpl<UserAddressMapper, UserAddre
         pendingAddress.setId(addressBO.getAddressId());
         baseMapper.updateById(pendingAddress);
     }
+
+    @Override
+    public void deleteUserAddress(String userId, String addressId) {
+        LambdaQueryWrapper<UserAddress> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserAddress::getUserId, userId);
+        queryWrapper.eq(UserAddress::getId, addressId);
+        baseMapper.delete(queryWrapper);
+    }
 }
 
 
