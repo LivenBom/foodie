@@ -80,6 +80,16 @@ public class AddressController {
         return IMOOCJSONResult.ok();
     }
 
+    @PostMapping("/setDefalut")
+    public IMOOCJSONResult setDefalut(@RequestParam String userId,
+                                      @RequestParam String addressId) {
+        if (StringUtils.isBlank(userId) || StringUtils.isBlank(addressId)) {
+            return IMOOCJSONResult.errorMsg("");
+        }
+        addressService.updateUserAddressToBeDefault(userId, addressId);
+        return IMOOCJSONResult.ok();
+    }
+
     private IMOOCJSONResult checkAddress(AddressBO addressBO) {
         String receiver = addressBO.getReceiver();
         if (StringUtils.isBlank(receiver)) {

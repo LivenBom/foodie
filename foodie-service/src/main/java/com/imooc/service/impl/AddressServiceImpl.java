@@ -38,10 +38,10 @@ public class AddressServiceImpl extends ServiceImpl<UserAddressMapper, UserAddre
     @Override
     public void addNewAddress(AddressBO addressBO) {
         // 1. 判断当前用户是否存在地址，如果没有，则新增为‘默认地址’
-        Integer isDefault = 0;
+        YesOrNo isDefault = YesOrNo.NO;
         List<UserAddress> addressList = this.queryAll(addressBO.getUserId());
         if (addressList == null || addressList.isEmpty() || addressList.size() == 0) {
-            isDefault = 1;
+            isDefault = YesOrNo.YES;
         }
         // 2. 保存到数据库
         UserAddress newAddress = new UserAddress();
@@ -59,12 +59,35 @@ public class AddressServiceImpl extends ServiceImpl<UserAddressMapper, UserAddre
         baseMapper.updateById(pendingAddress);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void deleteUserAddress(String userId, String addressId) {
         LambdaQueryWrapper<UserAddress> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UserAddress::getUserId, userId);
         queryWrapper.eq(UserAddress::getId, addressId);
         baseMapper.delete(queryWrapper);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void updateUserAddressToBeDefault(String userId, String addressId) {
+        // 1. 查找默认地址，设置为不默认
+        LambdaQueryWrapper<UserAddress> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserAddress::getUserId, userId);
+        queryWrapper.eq(UserAddress::getIsDefault, YesOrNo.YES);
+        List<UserAddress> list = baseMapper.selectList(queryWrapper);
+        list.forEach(item -> {
+            item.setIsDefault(YesOrNo.NO);
+            baseMapper.updateById(item);
+        });
+
+        // 2. 根据地址id修改为默认地址
+        LambdaQueryWrapper<UserAddress> defaultQueryWrapper = new LambdaQueryWrapper<>();
+        defaultQueryWrapper.eq(UserAddress::getUserId, userId);
+        defaultQueryWrapper.eq(UserAddress::getId, addressId);
+        UserAddress defaultAddress = baseMapper.selectOne(defaultQueryWrapper);
+        defaultAddress.setIsDefault(YesOrNo.YES);
+        baseMapper.updateById(defaultAddress);
     }
 }
 

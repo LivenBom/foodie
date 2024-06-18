@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import com.imooc.enums.YesOrNo;
 import lombok.Data;
 
 /**
@@ -62,7 +64,7 @@ public class UserAddress implements Serializable {
     /**
      * 是否默认地址
      */
-    private Integer isDefault;
+    private YesOrNo isDefault;
 
     /**
      * 创建时间

@@ -34,4 +34,9 @@ public interface AddressService extends IService<UserAddress> {
     * 删除用户地址信息
     * */
     public void deleteUserAddress(String userId, String addressId);
+
+    /*
+    * 设置默认地址
+    * */
+    public void updateUserAddressToBeDefault(String userId, String addressId);
 }
