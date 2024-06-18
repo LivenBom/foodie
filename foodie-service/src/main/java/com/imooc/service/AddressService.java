@@ -24,4 +24,9 @@ public interface AddressService extends IService<UserAddress> {
     * 用户新增地址
     * */
     public void addNewAddress(AddressBO addressBO);
+
+    /*
+    * 修改用户地址信息
+    * */
+    public void updateUserAddress(AddressBO addressBO);
 }

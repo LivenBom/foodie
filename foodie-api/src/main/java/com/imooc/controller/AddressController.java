@@ -56,6 +56,20 @@ public class AddressController {
         return IMOOCJSONResult.ok();
     }
 
+    @PostMapping("/update")
+    public IMOOCJSONResult update(@RequestBody AddressBO addressBO) {
+        if (StringUtils.isBlank(addressBO.getAddressId())) {
+            return IMOOCJSONResult.errorMsg("修改地址错误：addressId不能为空");
+        }
+
+        IMOOCJSONResult checkResult = checkAddress(addressBO);
+        if (checkResult.getStatus() != 200) {
+            return checkResult;
+        }
+        addressService.updateUserAddress(addressBO);
+        return IMOOCJSONResult.ok();
+    }
+
     private IMOOCJSONResult checkAddress(AddressBO addressBO) {
         String receiver = addressBO.getReceiver();
         if (StringUtils.isBlank(receiver)) {

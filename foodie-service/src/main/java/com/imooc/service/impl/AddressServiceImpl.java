@@ -49,6 +49,15 @@ public class AddressServiceImpl extends ServiceImpl<UserAddressMapper, UserAddre
         newAddress.setIsDefault(isDefault);
         baseMapper.insert(newAddress);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void updateUserAddress(AddressBO addressBO) {
+        UserAddress pendingAddress = new UserAddress();
+        BeanUtils.copyProperties(addressBO, pendingAddress);
+        pendingAddress.setId(addressBO.getAddressId());
+        baseMapper.updateById(pendingAddress);
+    }
 }
 
 
