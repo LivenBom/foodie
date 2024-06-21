@@ -32,6 +32,10 @@ public interface ItemsService extends IService<Items> {
     * */
     public List<ItemsImg> queryItemImgList(String itemId);
 
+    /*
+    * 查询单个商品规格
+    * */
+    public ItemsSpec queryItemSpecById(String specId);
 
     /*
     * 查询商品规格
@@ -73,4 +77,16 @@ public interface ItemsService extends IService<Items> {
      * 根据规格ids查询最新购物车中商品数据（用于刷新渲染购物车中的商品数据）
      * */
     public List<ShopcarVO> queryItemsBySpecIds(String specIds);
+
+
+    /*
+    * 根据商品id获取商品图片主图url
+    * */
+    public String queryItemMainImgById(String itemId);
+
+
+    /*
+    * 减少库存
+    * */
+    public void decreaseItemSpecStock(String specId, int buyCounts);
 }

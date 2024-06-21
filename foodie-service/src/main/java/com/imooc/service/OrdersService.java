@@ -2,6 +2,7 @@ package com.imooc.service;
 
 import com.imooc.pojo.Orders;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.imooc.pojo.bo.SubmitOrderBO;
 
 /**
 * @author liven
@@ -10,4 +11,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface OrdersService extends IService<Orders> {
 
+    /*
+    * 创建订单
+    * */
+    public void createOrder(SubmitOrderBO submitOrderBO);
 }

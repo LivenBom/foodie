@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.imooc.enums.CommentLevel;
+import com.imooc.enums.YesOrNo;
 import com.imooc.mapper.*;
 import com.imooc.pojo.*;
 import com.imooc.pojo.vo.CommentLevelCountsVO;
@@ -12,6 +13,7 @@ import com.imooc.pojo.vo.ItemCommentVO;
 import com.imooc.pojo.vo.SearchItemVO;
 import com.imooc.pojo.vo.ShopcarVO;
 import com.imooc.service.ItemsService;
+import com.imooc.service.ItemsSpecService;
 import com.imooc.utils.DesensitizationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,6 +53,14 @@ public class ItemsServiceImpl extends ServiceImpl<ItemsMapper, Items>
         LambdaQueryWrapper<ItemsImg> queryWrapper = new LambdaQueryWrapper();
         queryWrapper.eq(ItemsImg::getItemId, itemId);
         return itemsImgMapper.selectList(queryWrapper);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public ItemsSpec queryItemSpecById(String specId) {
+        LambdaQueryWrapper<ItemsSpec> queryWrapper = new LambdaQueryWrapper();
+        queryWrapper.eq(ItemsSpec::getId, specId);
+        return itemsSpecMapper.selectOne(queryWrapper);
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
@@ -138,6 +148,31 @@ public class ItemsServiceImpl extends ServiceImpl<ItemsMapper, Items>
     public List<ShopcarVO> queryItemsBySpecIds(String specIds) {
         String[] ids = specIds.split(",");
         return baseMapper.queryItemsBySpecIds(List.of(ids));
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public String queryItemMainImgById(String itemId) {
+        LambdaQueryWrapper<ItemsImg> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ItemsImg::getItemId, itemId);
+        queryWrapper.eq(ItemsImg::getIsMain, YesOrNo.YES);
+        ItemsImg result = itemsImgMapper.selectOne(queryWrapper);
+        return result != null ? result.getUrl() : "";
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void decreaseItemSpecStock(String specId, int buyCounts) {
+        // 并发问题处理：
+        // （1）synchronized 不推荐，集群下无用，性能低下
+        // （2）锁数据库：不推荐，导致数据库性能低下
+        // （3）分布式锁： zookeeper 或者 redis (推荐)
+        // （4）乐观锁：现阶段用这种
+
+        int result = baseMapper.decreaseItemSpecStock(specId, buyCounts);
+        if (result != 1) {
+            throw new RuntimeException("订单创建失败，原因：库存不足！");
+        }
     }
 }
 

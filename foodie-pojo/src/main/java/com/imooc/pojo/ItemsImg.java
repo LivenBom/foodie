@@ -1,11 +1,11 @@
 package com.imooc.pojo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.util.Date;
+
+import com.imooc.enums.YesOrNo;
 import lombok.Data;
 
 /**
@@ -39,7 +39,8 @@ public class ItemsImg implements Serializable {
     /**
      * 是否主图 是否主图，1：是，0：否
      */
-    private Integer isMain;
+    @EnumValue
+    private YesOrNo isMain;
 
     /**
      * 创建时间

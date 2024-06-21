@@ -1,11 +1,11 @@
 package com.imooc.pojo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.util.Date;
+
+import com.imooc.enums.OrderStatusEnum;
 import lombok.Data;
 
 /**
@@ -26,11 +26,12 @@ public class OrderStatus implements Serializable {
     /**
      * 订单状态
      */
-    private Integer orderStatus;
+    private OrderStatusEnum orderStatus;
 
     /**
      * 订单创建时间;对应[10:待付款]状态
      */
+    @TableField(fill = FieldFill.INSERT)
     private Date createdTime;
 
     /**

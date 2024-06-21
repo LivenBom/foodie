@@ -1,11 +1,11 @@
 package com.imooc.pojo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.util.Date;
+
+import com.imooc.enums.YesOrNo;
 import lombok.Data;
 
 /**
@@ -74,21 +74,23 @@ public class Orders implements Serializable {
     /**
      * 买家是否评价;1：已评价，0：未评价
      */
-    private Integer isComment;
+    private YesOrNo isComment;
 
     /**
      * 逻辑删除状态;1: 删除 0:未删除
      */
-    private Integer isDelete;
+    private YesOrNo isDelete;
 
     /**
      * 创建时间（成交时间）
      */
+    @TableField(fill = FieldFill.INSERT)
     private Date createdTime;
 
     /**
      * 更新时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updatedTime;
 
     @TableField(exist = false)

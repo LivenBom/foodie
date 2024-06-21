@@ -127,7 +127,7 @@
 
     </select>
 
-
+    <!-- 根据商品规格ids查询最新的商品数据   -->
     <select id="queryItemsBySpecIds" parameterType="List" resultType="com.imooc.pojo.vo.ShopcarVO">
         SELECT
             t_items.id as itemId,
@@ -156,5 +156,17 @@
                 #{specId}
             </foreach>
     </select>
+
+    <!-- 减少库存   -->
+    <update id="decreaseItemSpecStock">
+        UPDATE
+            items_spec
+        SET
+            stock = stock - #{pendingCounts}
+        WHERE
+            id = #{specId}
+        AND
+            stock - #{pendingCounts} >= 0
+    </update>
 
 </mapper>

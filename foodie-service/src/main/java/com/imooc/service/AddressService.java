@@ -39,4 +39,9 @@ public interface AddressService extends IService<UserAddress> {
     * 设置默认地址
     * */
     public void updateUserAddressToBeDefault(String userId, String addressId);
+
+    /*
+    * 根据用户id和地址id，查询用户地址信息
+    * */
+    public UserAddress queryUserAddress(String userId, String addressId);
 }

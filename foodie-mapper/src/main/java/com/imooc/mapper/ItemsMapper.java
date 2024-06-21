@@ -29,6 +29,9 @@ public interface ItemsMapper extends BaseMapper<Items> {
                                                     @Param("paramsMap") Map<String, Object> map);
 
     public List<ShopcarVO> queryItemsBySpecIds(@Param("paramsList") List specIdsList);
+
+    public int decreaseItemSpecStock(@Param("specId") String specId,
+                                     @Param("pendingCounts") int pendingCounts);
 }
 
 
