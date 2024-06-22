@@ -12,6 +12,7 @@ import com.imooc.service.ItemsService;
 import com.imooc.service.OrderItemsService;
 import com.imooc.service.OrdersService;
 import com.imooc.mapper.OrdersMapper;
+import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -38,6 +39,9 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders>
     @Autowired
     private OrderItemsMapper orderItemsMapper;
 
+    @Autowired
+    private Sid sid;
+
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void createOrder(SubmitOrderBO submitOrderBO) {
@@ -48,11 +52,15 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders>
         String leftMsg = submitOrderBO.getLeftMsg();
         Integer postAmount = 0; // 包邮：邮费设置为0
 
+        String orderId = sid.nextShort();
+
         UserAddress userAddress = addressService.queryUserAddress(userId, addressId);
 
         // 1. 新订单数据保存
         Orders newOrder = new Orders();
+        newOrder.setId(orderId);
         newOrder.setUserId(userId);
+        newOrder.setReceiverName(userAddress.getReceiver());
         newOrder.setReceiverMobile(userAddress.getMobile());
         newOrder.setReceiverAddress(userAddress.getProvince() + " "
                                     + userAddress.getCity() + " "
@@ -84,7 +92,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders>
 
             // 2.3 循环保存子订单数据到数据库
             OrderItems subOrderItem = new OrderItems();
-            subOrderItem.setOrderId(newOrder.getId());
+            subOrderItem.setOrderId(orderId);
             subOrderItem.setItemId(itemId);
             subOrderItem.setItemName(item.getItemName());
             subOrderItem.setItemImg(imgUrl);
