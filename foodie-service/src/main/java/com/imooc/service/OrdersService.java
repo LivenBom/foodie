@@ -1,6 +1,7 @@
 package com.imooc.service;
 
 import com.imooc.enums.OrderStatusEnum;
+import com.imooc.pojo.OrderStatus;
 import com.imooc.pojo.Orders;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.imooc.pojo.bo.SubmitOrderBO;
@@ -23,4 +24,11 @@ public interface OrdersService extends IService<Orders> {
     * 更新订单状态
     * */
     public void updateOrderStatus(String orderId, OrderStatusEnum orderStatus);
+
+
+    /*
+    * 查询订单状态
+    * */
+    public OrderStatus queryOrderStatusInfo(String orderId);
+
 }

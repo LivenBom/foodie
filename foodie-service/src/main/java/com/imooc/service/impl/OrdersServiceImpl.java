@@ -1,5 +1,6 @@
 package com.imooc.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.imooc.enums.OrderStatusEnum;
 import com.imooc.enums.YesOrNo;
@@ -146,6 +147,12 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders>
         paidOrderStatus.setPayTime(new Date());
 
         orderStatusMapper.updateById(paidOrderStatus);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public OrderStatus queryOrderStatusInfo(String orderId) {
+        return orderStatusMapper.selectById(orderId);
     }
 }
 
