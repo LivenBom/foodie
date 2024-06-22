@@ -31,4 +31,10 @@ public interface OrdersService extends IService<Orders> {
     * */
     public OrderStatus queryOrderStatusInfo(String orderId);
 
+
+    /*
+    * 关闭超时未支付订单
+    * */
+    public void closeOrder();
+
 }

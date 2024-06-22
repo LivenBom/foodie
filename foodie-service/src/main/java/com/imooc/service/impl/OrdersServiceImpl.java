@@ -154,6 +154,20 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders>
     public OrderStatus queryOrderStatusInfo(String orderId) {
         return orderStatusMapper.selectById(orderId);
     }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public void closeOrder() {
+        // 查询所有未付款订单，判断时间是否超时（1天），超时则关闭
+        LambdaQueryWrapper<OrderStatus> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(OrderStatus::getOrderStatus, OrderStatusEnum.WAIT_PAY);
+        queryWrapper.ge(OrderStatus::getCreatedTime, new Date(System.currentTimeMillis() - 24 * 3600 * 1000));
+        orderStatusMapper.selectList(queryWrapper).forEach(orderStatus -> {
+            orderStatus.setOrderStatus(OrderStatusEnum.CLOSE);
+            orderStatus.setCloseTime(new Date());
+            orderStatusMapper.updateById(orderStatus);
+        });
+    }
 }
 
 
