@@ -14,5 +14,5 @@ public interface OrdersService extends IService<Orders> {
     /*
     * 创建订单
     * */
-    public void createOrder(SubmitOrderBO submitOrderBO);
+    public String createOrder(SubmitOrderBO submitOrderBO);
 }
