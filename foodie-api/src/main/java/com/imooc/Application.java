@@ -4,6 +4,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /*
 * @SpringBootApplication
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.ComponentScan;
 // MyBatis: 扫描mapper接口所在的
 @MapperScan("com.imooc.mapper")
 @ComponentScan(basePackages = {"com.imooc", "org.n3r.idworker"})
+@EnableScheduling    // 开启定时任务
 @SpringBootApplication
 public class Application {
     // main是Java应用的入口
