@@ -5,8 +5,9 @@ import lombok.Getter;
 
 @Getter
 public enum SexEnum {
-    MALE(1, "男"),
-    FEMALE(2, "女");
+    MALE(0, "男"),
+    FEMALE(1, "女"),
+    SECRET(2, "保密");
 
     @EnumValue
     private Integer sex;
