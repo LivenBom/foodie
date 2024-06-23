@@ -66,6 +66,12 @@
             </exclusions>
         </dependency>
 
+        <!--  BO校验功能       -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
         <!-- 引入日志依赖：抽象层与实现层       -->
         <dependency>
             <groupId>org.slf4j</groupId>
