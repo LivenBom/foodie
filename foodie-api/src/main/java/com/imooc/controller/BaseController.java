@@ -15,4 +15,5 @@ public class BaseController {
     // 支付回调通知地址
     // 微信支付成功 -> 支付中心 -> 天天吃货平台
     String payReturnUrl = "http://localhost:8088/orders/notifyMerchantOrderPaid";
+
 }
