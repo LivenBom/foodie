@@ -64,6 +64,14 @@ public class CenterController {
                     String[] fileNameArr = fileName.split("\\.");
                     // 获取文件后缀名
                     String suffix = fileNameArr[fileNameArr.length - 1];
+
+                    // 这里做文件格式的校验，主要是为了避免黑客上传一些脚本文件，然后入侵我们的服务器
+                    if (!suffix.equalsIgnoreCase("png") &&
+                        !suffix.equalsIgnoreCase("jpg") &&
+                        !suffix.equalsIgnoreCase("jpeg")) {
+                        return IMOOCJSONResult.errorMsg("图片格式不正确");
+                    }
+
                     // 文件名称重组, 覆盖式上传(如果是要增量式：额外拼接当前时间）
                     String newFileName = "face-" + userId + "." + suffix;
 
