@@ -43,6 +43,16 @@ public class CenterUsersServiceImpl extends ServiceImpl<UsersMapper, Users>
 
         return queryUserInfo(userId);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Users updateUserFace(String userId, String faceUrl) {
+        Users updatedUser = new Users();
+        updatedUser.setId(userId);
+        updatedUser.setFace(faceUrl);
+        baseMapper.updateById(updatedUser);
+        return baseMapper.selectById(userId);
+    }
 }
 
 

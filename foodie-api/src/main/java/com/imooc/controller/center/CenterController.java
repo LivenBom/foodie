@@ -4,9 +4,14 @@ import com.imooc.controller.BaseController;
 import com.imooc.pojo.Users;
 import com.imooc.resource.FileUpload;
 import com.imooc.service.center.CenterUsersService;
+import com.imooc.utils.CookieUtils;
+import com.imooc.utils.DateUtils;
 import com.imooc.utils.IMOOCJSONResult;
+import com.imooc.utils.JsonUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
@@ -41,7 +46,9 @@ public class CenterController {
 
     @PostMapping("/uploadFace")
     public IMOOCJSONResult uploadFace(@RequestParam String userId,
-                                      MultipartFile file) {
+                                      MultipartFile file,
+                                      HttpServletRequest request,
+                                      HttpServletResponse response) {
         // 头像保存地址
         String fileSpace = fileUpload.getImageUserFaceLocation();
         // 在路径上为每一个用户增加一个userid, 用于区分不同用户上传
@@ -62,6 +69,8 @@ public class CenterController {
 
                     // 上传的头像最终保存的位置
                     String finalFacePath = fileSpace + uploadPathPrefix + File.separator + newFileName;
+                    // 用于提供给web服务访问的地址
+                    uploadPathPrefix += ("/" + newFileName);
 
                     File outFile = new File(finalFacePath);
                     if (outFile.getParentFile() != null) {
@@ -93,7 +102,30 @@ public class CenterController {
             return IMOOCJSONResult.errorMsg("文件不能为空");
         }
 
+        // 获取图片服务地址
+        String imageServerUrl = fileUpload.getImageServerUrl();
+        // 由于浏览器可能存在缓存，所以需要加上时间戳来保证更新后的图片能够及时刷新
+        String finalUserFaceUrl = imageServerUrl + uploadPathPrefix + "?t=" + DateUtils.getCurrentDateString(DateUtils.DATE_PATTERN);
+
+        // 更新用户头像到数据库
+        Users userResult = centerUsersService.updateUserFace(userId, finalUserFaceUrl);
+
+        // 同步到前端
+        userResult = setNullProperty(userResult);
+        CookieUtils.setCookie(request, response, "user",
+                JsonUtils.objectToJson(userResult), true);
+
         return IMOOCJSONResult.ok();
+    }
+
+    private Users setNullProperty(Users userResult) {
+        userResult.setPassword(null);
+        userResult.setMobile(null);
+        userResult.setEmail(null);
+        userResult.setCreatedTime(null);
+        userResult.setUpdatedTime(null);
+        userResult.setBirthday(null);
+        return userResult;
     }
 
 }
