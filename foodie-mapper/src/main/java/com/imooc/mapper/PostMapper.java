@@ -3,6 +3,8 @@ package com.imooc.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.imooc.pojo.Post;
 import com.imooc.pojo.vo.post.PostCategoriesVO;
+import com.imooc.pojo.vo.post.PostTopicsVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -15,6 +17,8 @@ import java.util.List;
 public interface PostMapper extends BaseMapper<Post> {
 
     public List<PostCategoriesVO> queryAllCategoriesWithColumns();
+
+    public List<PostTopicsVO> queryTopicsWithArticlesByColumnId(@Param("columnId") Integer columnId);
 }
 
 

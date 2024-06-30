@@ -2,6 +2,7 @@ package com.imooc.controller.post;
 
 import com.imooc.pojo.Users;
 import com.imooc.pojo.vo.post.PostCategoriesVO;
+import com.imooc.pojo.vo.post.PostTopicsVO;
 import com.imooc.resource.FileUpload;
 import com.imooc.service.center.CenterUsersService;
 import com.imooc.service.post.PostService;
@@ -36,5 +37,14 @@ public class PostController {
     public IMOOCJSONResult queryAllCategoriesWithColumns() {
         List<PostCategoriesVO> categories = postService.queryAllCategoriesWithColumns();
         return IMOOCJSONResult.ok(categories);
+    }
+
+    @GetMapping("/queryArticlesByColumnId")
+    public IMOOCJSONResult queryArticlesByColumnId(@RequestParam Integer columnId) {
+        if (columnId == null) {
+            return IMOOCJSONResult.errorMsg("栏目id不能为空");
+        }
+        List<PostTopicsVO> articles = postService.queryTopicsWithArticlesByColumnId(columnId);
+        return IMOOCJSONResult.ok(articles);
     }
 }

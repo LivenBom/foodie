@@ -57,4 +57,39 @@
         ORDER BY
             c.`sort` DESC, n.`sort` DESC, n.id ASC
     </select>
+
+    <!-- 根据专栏id获取topic及文章列表   -->
+    <resultMap id="TopicsWithArticles" type="com.imooc.pojo.vo.post.PostTopicsVO">
+        <id property="topicId" column="topicId"/>
+        <result property="topicTitle" column="topicTitle"/>
+        <result property="topicIcon" column="topicIcon"/>
+        <result property="columnId" column="columnId"/>
+
+        <collection property="articleList" ofType="com.imooc.pojo.vo.post.PostArticleVO">
+            <id property="articleId" column="articleId"/>
+            <result property="articleTitle" column="articleTitle"/>
+            <result property="isTop" column="isTop"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryTopicsWithArticlesByColumnId" resultMap="TopicsWithArticles" parameterType="int">
+        SELECT
+            t.id as topicId,
+            t.title as topicTitle,
+            t.icon as topicIcon,
+            t.column_id as columnId,
+            p.id as articleId,
+            p.title as articleTitle,
+            p.top as isTop
+        FROM
+            post_topic t
+        LEFT JOIN
+            post p
+        ON
+            t.id = p.topic_id
+        WHERE
+            t.show = 1 AND t.column_id = #{columnId}
+        ORDER BY
+            t.sort DESC, p.top DESC
+    </select>
 </mapper>
