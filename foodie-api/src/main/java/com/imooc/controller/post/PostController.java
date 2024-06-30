@@ -1,6 +1,7 @@
 package com.imooc.controller.post;
 
 import com.imooc.pojo.Users;
+import com.imooc.pojo.vo.post.ArticleDetailVO;
 import com.imooc.pojo.vo.post.PostCategoriesVO;
 import com.imooc.pojo.vo.post.PostTopicsVO;
 import com.imooc.resource.FileUpload;
@@ -46,5 +47,17 @@ public class PostController {
         }
         List<PostTopicsVO> articles = postService.queryTopicsWithArticlesByColumnId(columnId);
         return IMOOCJSONResult.ok(articles);
+    }
+
+    @GetMapping("/articleDetail")
+    public IMOOCJSONResult articleDetail(@RequestParam String articleId) {
+        if (StringUtils.isBlank(articleId)) {
+            return IMOOCJSONResult.errorMsg("文章id不能为空");
+        }
+        ArticleDetailVO articleDetail = postService.queryArticleDetailById(articleId);
+        if (articleDetail == null) {
+            return IMOOCJSONResult.errorMsg("文章不存在");
+        }
+        return IMOOCJSONResult.ok(articleDetail);
     }
 }

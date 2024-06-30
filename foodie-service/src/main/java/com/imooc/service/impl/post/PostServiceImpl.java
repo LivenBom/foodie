@@ -2,12 +2,14 @@ package com.imooc.service.impl.post;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.imooc.pojo.Post;
+import com.imooc.pojo.vo.post.ArticleDetailVO;
 import com.imooc.pojo.vo.post.PostArticleVO;
 import com.imooc.pojo.vo.post.PostCategoriesVO;
 import com.imooc.pojo.vo.post.PostTopicsVO;
 import com.imooc.service.post.PostService;
 import com.imooc.mapper.PostMapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import com.imooc.pojo.Post;
 import org.springframework.transaction.annotation.Propagation;
@@ -34,6 +36,18 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post>
     @Override
     public List<PostTopicsVO> queryTopicsWithArticlesByColumnId(Integer columnId) {
         return baseMapper.queryTopicsWithArticlesByColumnId(columnId);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public ArticleDetailVO queryArticleDetailById(String id) {
+        Post post = baseMapper.selectById(id);
+        if (post == null) {
+            return null;
+        }
+        ArticleDetailVO result = new ArticleDetailVO();
+        BeanUtils.copyProperties(post, result);
+        return result;
     }
 }
 
