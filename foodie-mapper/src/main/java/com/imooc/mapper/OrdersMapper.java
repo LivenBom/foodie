@@ -1,7 +1,12 @@
 package com.imooc.mapper;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.imooc.pojo.Orders;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.imooc.pojo.vo.MyOrdersVO;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Map;
 
 /**
 * @author liven
@@ -10,7 +15,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.imooc.pojo.Orders
 */
 public interface OrdersMapper extends BaseMapper<Orders> {
-
+    public Page<MyOrdersVO> queryMyOrders(@Param("paramsMap") Map<String, Object> map,
+                                          Page<MyOrdersVO> pageItem);
 }
 
 

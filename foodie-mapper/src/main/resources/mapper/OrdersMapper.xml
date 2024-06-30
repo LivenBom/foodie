@@ -29,4 +29,60 @@
         left_msg,extand,is_comment,
         is_delete,created_time,updated_time
     </sql>
+
+    <!-- 我的订单查询   -->
+    <resultMap id="myOrdersVO" type="com.imooc.pojo.vo.MyOrdersVO">
+        <id property="orderId" column="orderId"/>
+        <result property="createdTime" column="createTime"/>
+        <result property="payMethod" column="payMethod"/>
+        <result property="realPayAmount" column="realPayAmount"/>
+        <result property="postAmount" column="postAmount"/>
+        <result property="isComment" column="isComment"/>
+        <result property="orderStatus" column="orderStatus"/>
+
+        <collection property="subOrderItemVOList" ofType="com.imooc.pojo.vo.MySubOrderItemVO">
+            <id property="itemId" column="itemId"/>
+            <result property="itemName" column="itemName"/>
+            <result property="itemImg" column="itemImg"/>
+            <result property="itemSpecName" column="itemSpecName"/>
+            <result property="buyCounts" column="buyCounts"/>
+            <result property="price" column="price"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryMyOrders" resultMap="myOrdersVO" parameterType="Map">
+        SELECT
+            od.id as orderId,
+            od.created_time as createdTiime,
+            od.pay_method as payMethod,
+            od.real_pay_amount as realPayAmount,
+            od.post_amount as postAmount,
+            os.order_status as orderStatus,
+            oi.item_id as itemId,
+            oi.item_name as itemName,
+            oi.item_img as itemImg,
+            oi.item_spec_name as itemSpecName,
+            oi.price as price
+        FROM
+            orders od
+        LEFT JOIN
+            order_status os
+        ON
+            od.id = os.order_id
+        LEFT JOIN
+            order_items oi
+        ON
+            od.id = oi.order_id
+        WHERE
+            od.user_id = #{paramsMap.userId}
+        AND
+            od.is_delete = 0
+        <if test="paramsMap.orderStatus != null">
+        AND
+            os.order_status = #{paramsMap.orderStatus}
+        </if>
+
+        ORDER BY
+            od.updated_time ASC
+    </select>
 </mapper>
