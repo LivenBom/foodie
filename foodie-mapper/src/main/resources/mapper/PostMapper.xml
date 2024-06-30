@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imooc.mapper.PostMapper">
+
+    <resultMap id="BaseResultMap" type="com.imooc.pojo.Post">
+            <id property="id" column="id" jdbcType="VARCHAR"/>
+            <result property="title" column="title" jdbcType="VARCHAR"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+            <result property="comments" column="comments" jdbcType="INTEGER"/>
+            <result property="collects" column="collects" jdbcType="INTEGER"/>
+            <result property="view" column="view" jdbcType="INTEGER"/>
+            <result property="top" column="top" jdbcType="INTEGER"/>
+            <result property="topicId" column="topic_id" jdbcType="INTEGER"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
+            <result property="createdTime" column="created_time" jdbcType="TIMESTAMP"/>
+            <result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,title,content,
+        user_id,comments,collects,
+        view,top,topic_id,
+        is_deleted,created_time,updated_time
+    </sql>
+
+    <!-- 文章类型及专栏列表查询   -->
+    <resultMap id="CategoryVO" type="com.imooc.pojo.vo.post.PostCategoriesVO">
+        <id property="categoryId" column="categoryId"/>
+        <result property="categoryName" column="categoryName"/>
+        <collection property="columnList" ofType="com.imooc.pojo.vo.post.PostColumnVO">
+            <id property="columnId" column="columnId"/>
+            <result property="columnName" column="columnName"/>
+            <result property="columnIcon" column="columnIcon"/>
+            <result property="collapseEnable" column="collapseEnable"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryAllCategoriesWithColumns" resultMap="CategoryVO">
+        SELECT
+            c.id as categoryId,
+            c.name as categoryName,
+            n.id as columnId,
+            n.name as columnName,
+            n.icon as columnIcon,
+            n.collapase_enable as collapseEnable
+        FROM
+            post_category c
+        LEFT JOIN
+            post_column n
+        ON
+            c.id = n.category_id
+        WHERE
+            c.`show` = 1
+        ORDER BY
+            c.`sort` DESC, n.`sort` DESC, n.id ASC
+    </select>
+</mapper>
