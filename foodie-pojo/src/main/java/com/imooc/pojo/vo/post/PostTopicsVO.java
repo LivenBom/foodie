@@ -6,9 +6,9 @@ import java.util.List;
 
 @Data
 public class PostTopicsVO {
-    private String topicId;
-    private String topicTitle;
-    private String topicIcon;
+    private String id;
+    private String title;
+    private String icon;
     private String columnId;
 
     private List<PostArticleVO> articleList;

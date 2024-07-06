@@ -28,12 +28,12 @@
 
     <!-- 文章类型及专栏列表查询   -->
     <resultMap id="CategoryVO" type="com.imooc.pojo.vo.post.PostCategoriesVO">
-        <id property="categoryId" column="categoryId"/>
-        <result property="categoryName" column="categoryName"/>
+        <id property="id" column="categoryId"/>
+        <result property="name" column="categoryName"/>
         <collection property="columnList" ofType="com.imooc.pojo.vo.post.PostColumnVO">
-            <id property="columnId" column="columnId"/>
-            <result property="columnName" column="columnName"/>
-            <result property="columnIcon" column="columnIcon"/>
+            <id property="id" column="columnId"/>
+            <result property="name" column="columnName"/>
+            <result property="icon" column="columnIcon"/>
             <result property="collapseEnable" column="collapseEnable"/>
         </collection>
     </resultMap>
@@ -60,14 +60,14 @@
 
     <!-- 根据专栏id获取topic及文章列表   -->
     <resultMap id="TopicsWithArticles" type="com.imooc.pojo.vo.post.PostTopicsVO">
-        <id property="topicId" column="topicId"/>
-        <result property="topicTitle" column="topicTitle"/>
-        <result property="topicIcon" column="topicIcon"/>
+        <id property="id" column="topicId"/>
+        <result property="title" column="topicTitle"/>
+        <result property="icon" column="topicIcon"/>
         <result property="columnId" column="columnId"/>
 
         <collection property="articleList" ofType="com.imooc.pojo.vo.post.PostArticleVO">
-            <id property="articleId" column="articleId"/>
-            <result property="articleTitle" column="articleTitle"/>
+            <id property="id" column="articleId"/>
+            <result property="title" column="articleTitle"/>
             <result property="isTop" column="isTop"/>
         </collection>
     </resultMap>

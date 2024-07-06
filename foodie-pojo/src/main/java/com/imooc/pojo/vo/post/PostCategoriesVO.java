@@ -6,8 +6,8 @@ import java.util.List;
 
 @Data
 public class PostCategoriesVO {
-    private String categoryId;
-    private String categoryName;
+    private String id;
+    private String name;
 
     private List<PostColumnVO> columnList;
 }

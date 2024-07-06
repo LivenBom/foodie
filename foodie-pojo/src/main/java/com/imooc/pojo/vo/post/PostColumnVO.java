@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class PostColumnVO {
-    private String columnId;
-    private String columnName;
-    private String columnIcon;
+    private String id;
+    private String name;
+    private String icon;
     private Integer collapseEnable;
 }
