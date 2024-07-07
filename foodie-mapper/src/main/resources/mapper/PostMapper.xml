@@ -29,10 +29,10 @@
     <!-- 文章类型及专栏列表查询   -->
     <resultMap id="CategoryVO" type="com.imooc.pojo.vo.post.PostCategoriesVO">
         <id property="id" column="categoryId"/>
-        <result property="name" column="categoryName"/>
+        <result property="title" column="categoryName"/>
         <collection property="columnList" ofType="com.imooc.pojo.vo.post.PostColumnVO">
             <id property="id" column="columnId"/>
-            <result property="name" column="columnName"/>
+            <result property="title" column="columnName"/>
             <result property="icon" column="columnIcon"/>
             <result property="collapseEnable" column="collapseEnable"/>
         </collection>
