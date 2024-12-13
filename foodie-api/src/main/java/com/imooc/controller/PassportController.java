@@ -57,12 +57,10 @@ public class PassportController {
                                   HttpServletResponse response) {
         String username = userBO.getUsername();
         String password = userBO.getPassword();
-        String confirmPassword = userBO.getConfirmPassword();
 
         // 1. 判断用户名和密码必须不为空
         if (StringUtils.isBlank(username) ||
-            StringUtils.isBlank(password) ||
-                StringUtils.isBlank(confirmPassword)) {
+            StringUtils.isBlank(password)) {
             return IMOOCJSONResult.errorMsg("用户名或密码不能为空");
         }
 
@@ -77,23 +75,14 @@ public class PassportController {
             return IMOOCJSONResult.errorMsg("密码长度不能少于6");
         }
 
-        // 4. 判断两次密码是否一致
-        if (!password.equals(confirmPassword)) {
-            return IMOOCJSONResult.errorMsg("两次密码输入不一致");
-        }
-
-        // 5. 实现注册
+        // 4. 实现注册
         Users userResult = usersService.createUser(userBO);
 
-        // 6. 移除用户敏感信息
+        // 5. 移除用户敏感信息
         userResult = setNullProperty(userResult);
 
-        // 7. 设置cookie
-        // 这样网页前端就能通过cookie获取到登录的用户信息，保存登录的状态
+        // 6. 设置cookie
         CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
-
-        // TODO 生成用户token，存入redis会话
-        // TODO 同步购物车数据
 
         return IMOOCJSONResult.ok();
     }
@@ -150,5 +139,4 @@ public class PassportController {
         userResult.setBirthday(null);
         return userResult;
     }
-
 }
