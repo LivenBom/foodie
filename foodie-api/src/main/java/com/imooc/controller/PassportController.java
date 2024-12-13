@@ -7,6 +7,8 @@ import com.imooc.utils.CookieUtils;
 import com.imooc.utils.IMOOCJSONResult;
 import com.imooc.utils.JsonUtils;
 import com.imooc.utils.MD5Utils;
+import com.imooc.utils.JwtUtils;
+import com.imooc.utils.RedisOperator;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +17,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Tags({@Tag(name = "登录注册相关的接口")})
 @RestController
 @RequestMapping("/passport")
@@ -22,6 +27,12 @@ public class PassportController {
 
     @Autowired
     private UsersService usersService;
+
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    private RedisOperator redisOperator;
 
     @GetMapping("/usernameIsExist")
     public IMOOCJSONResult usernameIsExist(@RequestParam String username) {
@@ -93,15 +104,10 @@ public class PassportController {
                                  HttpServletResponse response) throws Exception {
         String username = userBO.getUsername();
         String password = userBO.getPassword();
+        
         // 1. 判断用户名和密码必须不为空
         if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
             return IMOOCJSONResult.errorMsg("用户名或密码不能为空");
-        }
-
-        // 2. 判断是否有这个用户
-        boolean isExist = usersService.queryUsernameIsExist(username);
-        if (!isExist) {
-            return IMOOCJSONResult.errorMsg("用户名不存在");
         }
 
         // 2. 实现登录
@@ -110,27 +116,27 @@ public class PassportController {
             return IMOOCJSONResult.errorMsg("用户名或密码不正确");
         }
 
-        // 3. 移除用户敏感信息
+        // 3. 生成token并保存到redis
+        String userId = userResult.getId();
+        String token = jwtUtils.generateToken(userId);
+        redisOperator.setUserToken(userId, token);
+
+        // 4. 移除用户敏感信息
         userResult = setNullProperty(userResult);
 
-        // 4. 设置cookie
-        // 这样网页前端就能通过cookie获取到登录的用户信息，保存登录的状态
+        // 5. 设置cookie
         CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
-
-        // TODO 生成用户token，存入redis会话
-        // TODO 同步购物车数据
-
-        return IMOOCJSONResult.ok(userResult);
+        
+        // 6. 返回token给前端
+        Map<String, String> map = new HashMap<>();
+        map.put("token", token);
+        return IMOOCJSONResult.ok(map);
     }
 
     @PostMapping("/logout")
-    public IMOOCJSONResult logout(@RequestParam String userId,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response) {
-        // 清除用户的相关信息的cookie
-        CookieUtils.deleteCookie(request, response, "user");
-        // TODO 用户退出登录，需要清空购物车
-        // TODO 分布式会话中需要清除用户数据
+    public IMOOCJSONResult logout(String userId) {
+        // 清除用户token
+        redisOperator.deleteUserToken(userId);
         return IMOOCJSONResult.ok();
     }
 
