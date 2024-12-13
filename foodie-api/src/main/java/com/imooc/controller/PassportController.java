@@ -127,9 +127,10 @@ public class PassportController {
         // 5. 设置cookie
         CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(userResult), true);
         
-        // 6. 返回token给前端
-        Map<String, String> map = new HashMap<>();
+        // 6. 返回token和用户信息给前端
+        Map<String, Object> map = new HashMap<>();
         map.put("token", token);
+        map.put("user", userResult);
         return IMOOCJSONResult.ok(map);
     }
 
