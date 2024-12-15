@@ -14,19 +14,28 @@ import java.util.Map;
 @Component
 public class JwtUtils {
     private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private static final long EXPIRATION = 7 * 24 * 60 * 60 * 1000; // 7天
+    private static final long ACCESS_TOKEN_EXPIRATION = 2 * 60 * 60 * 1000; // 2小时
+    private static final long REFRESH_TOKEN_EXPIRATION = 7 * 24 * 60 * 60 * 1000; // 7天
 
-    public String generateToken(String userId) {
+    public String generateAccessToken(String userId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
-        return createToken(claims);
+        claims.put("type", "access");
+        return createToken(claims, ACCESS_TOKEN_EXPIRATION);
     }
 
-    private String createToken(Map<String, Object> claims) {
+    public String generateRefreshToken(String userId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        claims.put("type", "refresh");
+        return createToken(claims, REFRESH_TOKEN_EXPIRATION);
+    }
+
+    private String createToken(Map<String, Object> claims, long expiration) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(SECRET_KEY)
                 .compact();
     }
@@ -41,10 +50,32 @@ public class JwtUtils {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token);
-            return true;
+            Claims claims = getClaimsFromToken(token);
+            return !isTokenExpired(claims);
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public boolean isRefreshToken(String token) {
+        try {
+            Claims claims = getClaimsFromToken(token);
+            return "refresh".equals(claims.get("type"));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String getUserIdFromToken(String token) {
+        try {
+            Claims claims = getClaimsFromToken(token);
+            return claims.get("userId", String.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private boolean isTokenExpired(Claims claims) {
+        return claims.getExpiration().before(new Date());
     }
 }

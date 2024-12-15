@@ -8,28 +8,38 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class RedisOperator {
+    private static final String TOKEN_PREFIX = "token:";
+    private static final String REFRESH_TOKEN_PREFIX = "refresh_token:";
+    private static final long ACCESS_TOKEN_DURATION = 2; // 2小时
+    private static final long REFRESH_TOKEN_DURATION = 7; // 7天
+
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
-    
-    private static final String TOKEN_PREFIX = "user:token:";
-    private static final long TOKEN_EXPIRE = 7 * 24 * 60 * 60; // 7天
-    
+    private RedisTemplate<String, String> redisTemplate;
+
     public void setUserToken(String userId, String token) {
         String key = TOKEN_PREFIX + userId;
-        // 先删除旧token（实现单点登录）
-        redisTemplate.delete(key);
-        // 设置新token
-        redisTemplate.opsForValue().set(key, token, TOKEN_EXPIRE, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(key, token, ACCESS_TOKEN_DURATION, TimeUnit.HOURS);
     }
-    
+
+    public void setUserRefreshToken(String userId, String refreshToken) {
+        String key = REFRESH_TOKEN_PREFIX + userId;
+        redisTemplate.opsForValue().set(key, refreshToken, REFRESH_TOKEN_DURATION, TimeUnit.DAYS);
+    }
+
     public String getUserToken(String userId) {
         String key = TOKEN_PREFIX + userId;
-        Object value = redisTemplate.opsForValue().get(key);
-        return value != null ? value.toString() : null;
+        return redisTemplate.opsForValue().get(key);
     }
-    
+
+    public String getUserRefreshToken(String userId) {
+        String key = REFRESH_TOKEN_PREFIX + userId;
+        return redisTemplate.opsForValue().get(key);
+    }
+
     public void deleteUserToken(String userId) {
-        String key = TOKEN_PREFIX + userId;
-        redisTemplate.delete(key);
+        String tokenKey = TOKEN_PREFIX + userId;
+        String refreshTokenKey = REFRESH_TOKEN_PREFIX + userId;
+        redisTemplate.delete(tokenKey);
+        redisTemplate.delete(refreshTokenKey);
     }
 }

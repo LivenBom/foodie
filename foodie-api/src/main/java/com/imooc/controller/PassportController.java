@@ -105,10 +105,12 @@ public class PassportController {
             return IMOOCJSONResult.errorMsg("用户名或密码不正确");
         }
 
-        // 3. 生成token并保存到redis
+        // 3. 生成token和refreshToken并保存到redis
         String userId = userResult.getId();
-        String token = jwtUtils.generateToken(userId);
-        redisOperator.setUserToken(userId, token);
+        String accessToken = jwtUtils.generateAccessToken(userId);
+        String refreshToken = jwtUtils.generateRefreshToken(userId);
+        redisOperator.setUserToken(userId, accessToken);
+        redisOperator.setUserRefreshToken(userId, refreshToken);
 
         // 4. 移除用户敏感信息
         userResult = setNullProperty(userResult);
@@ -118,9 +120,44 @@ public class PassportController {
         
         // 6. 返回token和用户信息给前端
         Map<String, Object> map = new HashMap<>();
-        map.put("token", token);
+        map.put("token", accessToken);
+        map.put("refreshToken", refreshToken);
         map.put("user", userResult);
         return IMOOCJSONResult.ok(map);
+    }
+
+    @PostMapping("/refresh")
+    public IMOOCJSONResult refreshToken(@RequestParam String refreshToken) {
+        // 1. 验证refresh token是否有效
+        if (!jwtUtils.validateToken(refreshToken) || !jwtUtils.isRefreshToken(refreshToken)) {
+            return IMOOCJSONResult.errorMsg("Invalid refresh token");
+        }
+
+        // 2. 从refresh token中获取用户ID
+        String userId = jwtUtils.getUserIdFromToken(refreshToken);
+        if (userId == null) {
+            return IMOOCJSONResult.errorMsg("Invalid refresh token");
+        }
+
+        // 3. 验证refresh token是否与redis中的匹配
+        String storedRefreshToken = redisOperator.getUserRefreshToken(userId);
+        if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
+            return IMOOCJSONResult.errorMsg("Refresh token has been revoked");
+        }
+
+        // 4. 生成新的access token和refresh token
+        String newAccessToken = jwtUtils.generateAccessToken(userId);
+        String newRefreshToken = jwtUtils.generateRefreshToken(userId);
+
+        // 5. 更新redis中的token
+        redisOperator.setUserToken(userId, newAccessToken);
+        redisOperator.setUserRefreshToken(userId, newRefreshToken);
+
+        // 6. 返回新的token
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("token", newAccessToken);
+        tokens.put("refreshToken", newRefreshToken);
+        return IMOOCJSONResult.ok(tokens);
     }
 
     @PostMapping("/logout")
