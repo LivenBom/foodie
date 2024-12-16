@@ -24,13 +24,13 @@ public class LoginInterceptor implements HandlerInterceptor {
         // 1. 获取请求头中的token
         String token = request.getHeader("Authorization");
         if (StringUtils.isBlank(token)) {
-            returnError(response, "请登录");
+            returnError(response, "请登录", HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
 
         // 2. 验证token是否有效
         if (!jwtUtils.validateToken(token)) {
-            returnError(response, "登录已过期，请重新登录");
+            returnError(response, "登录已过期，请重新登录", HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
 
@@ -40,16 +40,17 @@ public class LoginInterceptor implements HandlerInterceptor {
         // 4. 检查redis中是否存在该token（实现单点登录）
         String cachedToken = redisOperator.getUserToken(userId);
         if (StringUtils.isBlank(cachedToken) || !token.equals(cachedToken)) {
-            returnError(response, "您的账号已在其他设备登录");
+            returnError(response, "您的账号已在其他设备登录", HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
 
         return true;
     }
 
-    private void returnError(HttpServletResponse response, String msg) throws Exception {
+    private void returnError(HttpServletResponse response, String msg, int statusCode) throws Exception {
         response.setContentType("application/json");
-        response.setCharacterEncoding("utf-8");
-        response.getWriter().print(JsonUtils.objectToJson(IMOOCJSONResult.errorMsg(msg)));
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(statusCode);
+        response.getWriter().write(JsonUtils.objectToJson(IMOOCJSONResult.errorMsg(msg)));
     }
 }
