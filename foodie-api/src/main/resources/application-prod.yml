@@ -1,0 +1,21 @@
+################################################################
+#
+# 生产环境配置
+#
+################################################################
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://10.1.12.5:3306/foodie?serverTimezone=GMT%2B8&characterEncoding=utf8&useSSL=false
+    username: root
+    password: Zxc112211
+    hikari:
+      connection-timeout: 30000
+      minimum-idle: 5
+      maximum-pool-size: 20
+      auto-commit: true
+      idle-timeout: 600000
+      pool-name: ProdHikariCP
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1
