@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>写文章 - Foodie</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 80px; /* 为底部按钮留出空间 */
+            position: relative;
+            min-height: 100vh;
+        }
+        .publish-settings {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        .settings-title {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .article-content {
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        #editor {
+            height: 500px;
+            border: 1px solid #ccc;
+        }
+        /* 确保编辑器的菜单不会超出容器 */
+        .w-e-toolbar {
+            z-index: 2 !important;
+        }
+        .w-e-text-container {
+            z-index: 1 !important;
+        }
+        .submit-btn {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 9999; /* 确保按钮始终在最上层 */
+        }
+        .submit-btn .btn-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .main-content {
+            margin-bottom: 80px; /* 为固定定位的按钮留出空间 */
+        }
+        /* 添加一个遮罩层，确保编辑器不会遮挡按钮 */
+        .editor-mask {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px; /* 与底部间距相同 */
+            background: linear-gradient(transparent, white);
+            pointer-events: none; /* 允许点击穿透 */
+            z-index: 2;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container">
+        <el-form ref="postForm" :model="postForm" :rules="rules" label-width="100px" class="main-content">
+            <!-- 发布设置 -->
+            <div class="publish-settings">
+                <div class="settings-title">
+                    <span>发布设置</span>
+                </div>
+                
+                <el-form-item label="选择分类" prop="categoryId">
+                    <el-select v-model="postForm.categoryId" placeholder="请选择分类"
+                             style="width: 100%" @change="handleCategoryChange">
+                        <el-option
+                            v-for="category in categories"
+                            :key="category.id"
+                            :label="category.name || category.title"
+                            :value="category.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+
+                <el-form-item label="选择专栏" prop="columnId">
+                    <el-select v-model="postForm.columnId" placeholder="请选择专栏"
+                             style="width: 100%" @change="handleColumnChange"
+                             :disabled="!postForm.categoryId">
+                        <el-option
+                            v-for="column in columns"
+                            :key="column.id"
+                            :label="column.name || column.title"
+                            :value="column.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                
+                <el-form-item label="选择主题" prop="topicId">
+                    <el-select v-model="postForm.topicId" placeholder="请选择主题"
+                             style="width: 100%"
+                             :disabled="!postForm.columnId"
+                             @change="handleTopicChange">
+                        <el-option
+                            v-for="topic in topics"
+                            :key="topic.id"
+                            :label="topic.name || topic.title"
+                            :value="topic.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </div>
+
+            <!-- 文章内容 -->
+            <div class="article-content">
+                <el-form-item label="文章标题" prop="title">
+                    <el-input v-model="postForm.title" placeholder="请输入标题"></el-input>
+                </el-form-item>
+
+                <el-form-item label="文章内容">
+                    <div id="editor"></div>
+                    <div class="editor-mask"></div>
+                </el-form-item>
+            </div>
+        </el-form>
+
+        <!-- 提交按钮 -->
+        <div class="submit-btn">
+            <div class="btn-container">
+                <el-button type="primary" @click="submitPost" style="width: 100%">
+                    发布文章
+                </el-button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 基础依赖 -->
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    
+    <!-- wangEditor 依赖 -->
+    <script src="https://cdn.jsdelivr.net/npm/wangeditor@4.7.15/dist/wangEditor.min.js"></script>
+    
+    <!-- 业务代码 -->
+    <script src="write.js"></script>
+</body>
+</html>

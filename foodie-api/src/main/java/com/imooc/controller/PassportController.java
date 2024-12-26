@@ -134,7 +134,7 @@ public class PassportController {
         }
 
         // 2. 从refresh token中获取用户ID
-        String userId = jwtUtils.getUserIdFromToken(refreshToken);
+        String userId = jwtUtils.getUserId(refreshToken);
         if (userId == null) {
             return IMOOCJSONResult.errorMsg("Invalid refresh token");
         }

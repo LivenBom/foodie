@@ -7,6 +7,7 @@ import com.imooc.pojo.vo.post.PostArticleVO;
 import com.imooc.pojo.vo.post.PostCategoriesVO;
 import com.imooc.pojo.Post;
 import com.imooc.pojo.vo.post.PostTopicsVO;
+import com.imooc.pojo.vo.post.CreatePostReqVO;
 
 import java.util.List;
 
@@ -31,5 +32,10 @@ public interface PostService extends IService<Post> {
     * 根据文章id，查询文章详情
     * */
     public ArticleDetailVO queryArticleDetailById(String id);
+
+    /*
+    * 创建新文章
+    * */
+    public String createPost(CreatePostReqVO createPostReqVO);
 
 }

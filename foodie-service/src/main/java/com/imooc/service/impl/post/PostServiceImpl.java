@@ -2,10 +2,7 @@ package com.imooc.service.impl.post;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.imooc.pojo.Post;
-import com.imooc.pojo.vo.post.ArticleDetailVO;
-import com.imooc.pojo.vo.post.PostArticleVO;
-import com.imooc.pojo.vo.post.PostCategoriesVO;
-import com.imooc.pojo.vo.post.PostTopicsVO;
+import com.imooc.pojo.vo.post.*;
 import com.imooc.service.post.PostService;
 import com.imooc.mapper.PostMapper;
 import org.apache.ibatis.annotations.Param;
@@ -14,8 +11,9 @@ import org.springframework.stereotype.Service;
 import com.imooc.pojo.Post;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
+import java.util.UUID;
+import java.util.Date;
 
 /**
 * @author liven
@@ -49,8 +47,23 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post>
         BeanUtils.copyProperties(post, result);
         return result;
     }
+
+    @Override
+    public String createPost(CreatePostReqVO createPostReqVO) {
+        // 1. 创建文章实体
+        Post post = new Post();
+        post.setId(UUID.randomUUID().toString()); // 生成唯一ID
+        post.setTitle(createPostReqVO.getTitle());
+        post.setContent(createPostReqVO.getContent());
+        post.setComments(0);
+        post.setCollects(0);
+        post.setView(0);
+        post.setTop(0);  // 默认不置顶
+        post.setTopicId(createPostReqVO.getTopicId());
+
+        // 2. 保存文章
+        save(post);
+
+        return post.getId();
+    }
 }
-
-
-
-

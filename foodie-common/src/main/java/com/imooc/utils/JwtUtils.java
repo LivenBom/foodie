@@ -5,8 +5,11 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.crypto.SecretKey;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,8 +53,11 @@ public class JwtUtils {
 
     public boolean validateToken(String token) {
         try {
-            Claims claims = getClaimsFromToken(token);
-            return !isTokenExpired(claims);
+            Jwts.parserBuilder()
+                    .setSigningKey(SECRET_KEY)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
         } catch (Exception e) {
             return false;
         }
@@ -66,13 +72,17 @@ public class JwtUtils {
         }
     }
 
-    public String getUserIdFromToken(String token) {
-        try {
-            Claims claims = getClaimsFromToken(token);
-            return claims.get("userId", String.class);
-        } catch (Exception e) {
+    public String getUserId(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims.get("userId", String.class);
+    }
+
+    public String getUserIdFromRequest(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (token == null) {
             return null;
         }
+        return getUserId(token);
     }
 
     private boolean isTokenExpired(Claims claims) {
