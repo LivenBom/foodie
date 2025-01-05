@@ -17,12 +17,14 @@
             <result property="birthday" column="birthday" jdbcType="DATE"/>
             <result property="createdTime" column="created_time" jdbcType="TIMESTAMP"/>
             <result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP"/>
+            <result property="appleId" column="apple_id" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,username,password,
         nickname,realname,face,
         mobile,email,sex,
-        birthday,created_time,updated_time
+        birthday,created_time,updated_time,
+        apple_id
     </sql>
 </mapper>
