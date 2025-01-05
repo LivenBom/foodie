@@ -1,6 +1,7 @@
 package com.imooc.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.imooc.enums.Sex;
 import com.imooc.pojo.Users;
@@ -44,15 +45,38 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users>
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // 默认昵称同用户名
+        // 默认用户昵称同用户名
         user.setNickname(userBO.getUsername());
         // 默认头像
         user.setFace(USER_FACE);
         // 默认生日
         user.setBirthday(DateUtils.stringToDate("1900-01-01"));
-        // 默认性别保密
+        // 默认性别为 保密
         user.setSex(Sex.secret);
+
         baseMapper.insert(user);
+
+        return user;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Users createUser(Users user) {
+        // 设置默认头像
+        if (user.getFace() == null) {
+            user.setFace(USER_FACE);
+        }
+        // 设置默认生日
+        if (user.getBirthday() == null) {
+            user.setBirthday(DateUtils.stringToDate("1900-01-01"));
+        }
+        // 设置默认性别为 保密
+        if (user.getSex() == null) {
+            user.setSex(Sex.secret);
+        }
+
+        baseMapper.insert(user);
+
         return user;
     }
 
@@ -65,8 +89,11 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users>
                 .eq(Users::getPassword, password);
         return baseMapper.selectOne(queryWrapper);
     }
+
+    @Override
+    public Users queryUserByAppleId(String appleId) {
+        QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("apple_id", appleId);
+        return baseMapper.selectOne(queryWrapper);
+    }
 }
-
-
-
-

@@ -22,7 +22,17 @@ public interface UsersService extends IService<Users> {
     public Users createUser(UserBO userBO);
 
     /*
+    * 创建新用户
+    * */
+    public Users createUser(Users user);
+
+    /*
     * 检索用户名和密码是否匹配，用于登录
     * */
     public Users queryUserForLogin(String username, String password);
+
+    /**
+     * 根据 Apple ID 查询用户
+     */
+    Users queryUserByAppleId(String appleId);
 }

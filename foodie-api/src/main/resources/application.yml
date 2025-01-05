@@ -59,3 +59,22 @@ knife4j:
 springdoc:
   api-docs:
     path: /v3/api-docs
+
+################################################################
+#
+# Apple Sign In Configuration
+#
+################################################################
+apple:
+  auth:
+    client-id: com.rise.liven.SwiftTeam       # 替换为实际的 App Bundle ID
+    team-id: BP68XD27A7               # 替换为实际的 Team ID
+    key-id: HKK4R8QVUA                 # 替换为实际的 Key ID
+    private-key: |                      # 替换为实际的 Private Key
+      -----BEGIN PRIVATE KEY-----
+      MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgjP2mBfY2S+RyXp7Q
+      tiQOgzXxESckYgBoxTBd9jTxsD2gCgYIKoZIzj0DAQehRANCAAQ/RJKrJWAUx3F5
+      xcT3V00vBGH5Wq6gy6KAZXI7EjOtK0YoO+AerwEgh726xar6ZP9FoQ6Iiw5dwJIm
+      WRFkFjZt
+      -----END PRIVATE KEY-----
+    redirect-uri: ${server.scheme:https}://${server.domain:localhost:8088}/auth/apple/callback

@@ -31,7 +31,9 @@ public class LoginInterceptor implements HandlerInterceptor {
         // 检查是否为排除的路径
         if (path.startsWith("/post/categories") || 
             path.startsWith("/post/topics") || 
-            path.startsWith("/post/write/create")) {
+            path.startsWith("/post/write/create") ||
+            path.startsWith("/auth/apple/login") ||     // 添加Apple登录路径
+            path.startsWith("/auth/apple/callback")) {  // 添加Apple回调路径
             logger.info("允许访问排除的路径: " + path);
             return true;
         }

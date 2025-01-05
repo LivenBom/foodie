@@ -12,8 +12,8 @@ import lombok.Data;
  * 用户表 
  * @TableName users
  */
-@TableName(value ="users")
 @Data
+@TableName(value ="users")
 public class Users implements Serializable {
     /**
      * 主键id 用户id
@@ -79,6 +79,11 @@ public class Users implements Serializable {
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updatedTime;
+
+    /**
+     * Apple ID
+     */
+    private String appleId;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

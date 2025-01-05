@@ -2,10 +2,7 @@ package com.imooc.config;
 
 import com.imooc.interceptor.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -19,10 +16,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Autowired
     private LoginInterceptor loginInterceptor;
 
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
-    }
+    // Removed redundant RestTemplate bean definition
 
     // 实现静态资源的映射
     @Override
@@ -40,6 +34,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/passport/logout",
                 "/passport/regist",
                 "/passport/usernameIsExist",
+                "/auth/apple/login",     // 添加Apple登录路径
+                "/auth/apple/callback",  // 添加Apple回调路径
+                "/error",               // 添加错误页面路径
                 "/post/categories/**",
                 "/post/topics/**",
                 "/post/write/create/**",

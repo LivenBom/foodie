@@ -172,11 +172,6 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.14.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.14.0</version>
-        </dependency>
 
         <!-- knife4j 文档API库       -->
         <!--
@@ -220,6 +215,13 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>0.11.5</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <!-- Apple Auth JWT 处理库 -->
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>9.31</version>
         </dependency>
 
     </dependencies>
