@@ -105,17 +105,22 @@ public class AppleAuthController {
             }
 
             // 生成 token
-            String accessToken = jwtUtils.generateAccessToken(user.getId());
-            String refreshToken = jwtUtils.generateRefreshToken(user.getId());
+            try {
+                String accessToken = jwtUtils.generateAccessToken(user.getId());
+                String refreshToken = jwtUtils.generateRefreshToken(user.getId());
 
-            // 返回结果
-            Map<String, Object> result = new HashMap<>();
-            result.put("token", accessToken);
-            result.put("refreshToken", refreshToken);
-            result.put("user", convertToAppleUserBO(user));
+                // 构造返回结果
+                Map<String, Object> result = new HashMap<>();
+                result.put("user", convertToAppleUserBO(user));
+                result.put("token", accessToken);
+                result.put("refreshToken", refreshToken);
 
-            return IMOOCJSONResult.ok(result);
+                return IMOOCJSONResult.ok(result);
 
+            } catch (Exception e) {
+                log.error("Error generating tokens: {}", e.getMessage(), e);
+                return IMOOCJSONResult.errorMsg("Failed to generate authentication tokens");
+            }
         } catch (Exception e) {
             log.error("Apple authentication failed: {}", e.getMessage());
             return IMOOCJSONResult.errorMsg("Authentication failed: " + e.getMessage());
@@ -127,24 +132,30 @@ public class AppleAuthController {
         log.info("Received Apple login request");
         log.info("Identity Token: {}", loginRequest.getIdentityToken());
         
-        // 如果没有identityToken，返回错误信息
-        if (org.apache.commons.lang3.StringUtils.isBlank(loginRequest.getIdentityToken())) {
-            return IMOOCJSONResult.errorMsg("Identity token is required");
-        }
-
         try {
+            // 如果没有identityToken，返回错误信息
+            if (org.apache.commons.lang3.StringUtils.isBlank(loginRequest.getIdentityToken())) {
+                return IMOOCJSONResult.errorMsg("Identity token is required");
+            }
+
             // 验证 Apple 返回的 Identity Token
             Map<String, Object> appleUserInfo = appleAuthService.validateIdentityToken(loginRequest.getIdentityToken());
             if (appleUserInfo == null) {
-                return IMOOCJSONResult.errorMsg("Apple authentication failed");
+                log.error("Apple authentication failed: invalid identity token");
+                return IMOOCJSONResult.errorMsg("Apple authentication failed: invalid identity token");
             }
 
+            // 获取用户信息
             String appleUserId = (String) appleUserInfo.get("sub");
-            
-            // 检查用户是否已存在
+            if (org.apache.commons.lang3.StringUtils.isBlank(appleUserId)) {
+                log.error("Apple authentication failed: no user ID in token");
+                return IMOOCJSONResult.errorMsg("Apple authentication failed: invalid user info");
+            }
+
+            // 查找或创建用户
             Users user = usersService.queryUserByAppleId(appleUserId);
-            
             if (user == null) {
+                log.info("Creating new user for Apple ID: {}", appleUserId);
                 // 创建新用户
                 user = new Users();
                 user.setAppleId(appleUserId);
@@ -161,32 +172,45 @@ public class AppleAuthController {
                     user.setNickname(user.getUsername());
                 }
 
-                // 为Apple登录用户设置默认密码（使用他们的Apple ID的MD5值）
+                // 为Apple登录用户设置默认密码
                 try {
                     String defaultPassword = MD5Utils.getMD5Str(appleUserId);
                     user.setPassword(defaultPassword);
                 } catch (Exception e) {
-                    log.error("Failed to generate MD5 password", e);
-                    return IMOOCJSONResult.errorMsg("Failed to create user");
+                    log.error("Failed to generate MD5 password: {}", e.getMessage(), e);
+                    return IMOOCJSONResult.errorMsg("Failed to create user: password generation error");
                 }
                 
-                user = usersService.createUser(user);
+                try {
+                    user = usersService.createUser(user);
+                    if (user == null) {
+                        log.error("Failed to create user in database");
+                        return IMOOCJSONResult.errorMsg("Failed to create user in database");
+                    }
+                } catch (Exception e) {
+                    log.error("Error creating user: {}", e.getMessage(), e);
+                    return IMOOCJSONResult.errorMsg("Failed to create user: " + e.getMessage());
+                }
             }
 
-            // 生成 token
-            String accessToken = jwtUtils.generateAccessToken(user.getId());
-            String refreshToken = jwtUtils.generateRefreshToken(user.getId());
+            // 生成token
+            try {
+                String accessToken = jwtUtils.generateAccessToken(user.getId());
+                String refreshToken = jwtUtils.generateRefreshToken(user.getId());
 
-            // 返回结果
-            Map<String, Object> result = new HashMap<>();
-            result.put("token", accessToken);
-            result.put("refreshToken", refreshToken);
-            result.put("user", convertToAppleUserBO(user));
+                // 构造返回结果
+                Map<String, Object> result = new HashMap<>();
+                result.put("user", convertToAppleUserBO(user));
+                result.put("token", accessToken);
+                result.put("refreshToken", refreshToken);
 
-            return IMOOCJSONResult.ok(result);
-
+                return IMOOCJSONResult.ok(result);
+            } catch (Exception e) {
+                log.error("Error generating tokens: {}", e.getMessage(), e);
+                return IMOOCJSONResult.errorMsg("Failed to generate authentication tokens");
+            }
         } catch (Exception e) {
-            log.error("Apple login failed: {}", e.getMessage());
+            log.error("Unexpected error during Apple login: {}", e.getMessage(), e);
             return IMOOCJSONResult.errorMsg("Login failed: " + e.getMessage());
         }
     }

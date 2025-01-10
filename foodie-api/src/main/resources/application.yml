@@ -18,7 +18,7 @@ server:
 ################################################################
 spring:
   profiles:
-    active: uat,redis   # 切换到生产环境
+    active: prod,redis   # 切换到生产环境
   servlet:
     multipart:
       max-file-size: 51200            # 限制上传文件大小（500kb）
