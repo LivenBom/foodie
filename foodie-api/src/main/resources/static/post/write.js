@@ -28,7 +28,8 @@ new Vue({
                 columnId: '',
                 columnName: '',
                 topicId: '',
-                topicTitle: ''
+                topicTitle: '',
+                isPaid: false
             },
             rules: {
                 title: [
@@ -153,12 +154,8 @@ new Vue({
                     const postData = {
                         title: this.postForm.title,
                         content: this.postForm.content,
-                        categoryId: this.postForm.categoryId,
-                        categoryName: this.postForm.categoryName,
-                        columnId: this.postForm.columnId,
-                        columnName: this.postForm.columnName,
                         topicId: this.postForm.topicId,
-                        topicTitle: this.postForm.topicTitle
+                        isPaid: this.postForm.isPaid ? 1 : 0
                     };
 
                     axios.post('/post/write/create', postData)

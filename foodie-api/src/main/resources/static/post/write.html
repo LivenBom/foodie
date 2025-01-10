@@ -127,6 +127,14 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
+
+                <el-form-item label="付费阅读">
+                    <el-switch
+                        v-model="postForm.isPaid"
+                        active-text="开启"
+                        inactive-text="关闭">
+                    </el-switch>
+                </el-form-item>
             </div>
 
             <!-- 文章内容 -->

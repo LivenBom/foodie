@@ -60,6 +60,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post>
         post.setView(0);
         post.setTop(0);  // 默认不置顶
         post.setTopicId(createPostReqVO.getTopicId());
+        post.setIsPaid(createPostReqVO.getIsPaid() != null ? createPostReqVO.getIsPaid() : 0); // 设置是否付费，默认为0（不付费）
+
 
         // 2. 保存文章
         save(post);

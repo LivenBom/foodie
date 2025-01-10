@@ -69,6 +69,7 @@
             <id property="id" column="articleId"/>
             <result property="title" column="articleTitle"/>
             <result property="isTop" column="isTop"/>
+            <result property="isPaid" column="isPaid"/>
         </collection>
     </resultMap>
 
@@ -80,7 +81,8 @@
             t.column_id as columnId,
             p.id as articleId,
             p.title as articleTitle,
-            p.top as isTop
+            p.top as isTop,
+            p.is_paid as isPaid
         FROM
             post_topic t
         LEFT JOIN
@@ -90,6 +92,8 @@
         WHERE
             t.show = 1 AND t.column_id = #{columnId}
         ORDER BY
-            t.sort DESC, p.top DESC
+            t.sort DESC,
+            p.top DESC,
+            p.created_time DESC
     </select>
 </mapper>

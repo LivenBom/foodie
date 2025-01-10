@@ -60,6 +60,12 @@ public class Post implements Serializable {
     private Integer topicId;
 
     /**
+     * 是否付费阅读（1-是，0-否）
+     */
+    @TableField("is_paid")
+    private Integer isPaid;
+
+    /**
      * 逻辑删除(1-删除，0-保留)
      */
     @TableLogic

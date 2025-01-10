@@ -27,4 +27,9 @@ public class CreatePostReqVO {
      */
     @NotNull(message = "主题ID不能为空")
     private Integer topicId;
+
+    /**
+     * 是否付费阅读 0-否 1-是
+     */
+    private Integer isPaid;
 }

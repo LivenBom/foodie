@@ -9,4 +9,5 @@ public class PostArticleVO {
     private String id;
     private String title;
     private Integer isTop;
+    private Integer isPaid;
 }
