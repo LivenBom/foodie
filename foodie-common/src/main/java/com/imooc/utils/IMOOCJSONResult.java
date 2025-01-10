@@ -75,6 +75,10 @@ public class IMOOCJSONResult {
         return new IMOOCJSONResult(556, msg, null);
     }
 
+    public static IMOOCJSONResult errorCustom(Integer code, String msg) {
+        return new IMOOCJSONResult(code, msg, null);
+    }
+
     public IMOOCJSONResult() {
 
     }

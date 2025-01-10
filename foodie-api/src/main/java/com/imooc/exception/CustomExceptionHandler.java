@@ -1,5 +1,6 @@
 package com.imooc.exception;
 
+import com.imooc.common.exception.GraceException;
 import com.imooc.utils.IMOOCJSONResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -12,5 +13,10 @@ public class CustomExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public IMOOCJSONResult handlerMaxUploadFile(MaxUploadSizeExceededException e) {
         return IMOOCJSONResult.errorMsg("文件上传大小不能超过500k，请压缩图片或降低图片质量后重试！");
+    }
+
+    @ExceptionHandler(GraceException.class)
+    public IMOOCJSONResult handleGraceException(GraceException e) {
+        return IMOOCJSONResult.errorMsg(e.getMessage());
     }
 }

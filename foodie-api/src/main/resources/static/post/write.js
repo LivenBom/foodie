@@ -49,7 +49,14 @@ new Vue({
             categories: [],
             columns: [],
             topics: [],
-            loading: false
+            loading: false,
+            // 添加分类对话框数据
+            categoryDialog: {
+                visible: false,
+                form: {
+                    name: ''
+                }
+            }
         }
     },
     mounted() {
@@ -144,6 +151,36 @@ new Vue({
             if (topic) {
                 this.postForm.topicTitle = topic.name || topic.title;
             }
+        },
+        // 显示添加分类对话框
+        showAddCategoryDialog() {
+            this.categoryDialog.visible = true;
+            this.categoryDialog.form.name = '';
+        },
+        // 提交新分类
+        submitCategory() {
+            if (!this.categoryDialog.form.name) {
+                this.$message.warning('请输入分类名称');
+                return;
+            }
+            
+            axios.post('/post/category/create', {
+                name: this.categoryDialog.form.name
+            })
+            .then(response => {
+                if (response.data.status === 200) {
+                    this.$message.success('添加分类成功');
+                    this.categoryDialog.visible = false;
+                    // 重新加载分类列表
+                    this.loadCategories();
+                } else {
+                    this.$message.error(response.data.msg || '添加分类失败');
+                }
+            })
+            .catch(error => {
+                console.error('添加分类失败:', error);
+                this.$message.error('添加分类失败');
+            });
         },
         submitPost() {
             this.$refs.postForm.validate((valid) => {

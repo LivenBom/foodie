@@ -17,7 +17,7 @@ public class PostCategory implements Serializable {
     /**
      * 分类id
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Integer id;
 
     /**
@@ -33,12 +33,14 @@ public class PostCategory implements Serializable {
     /**
      * 显示状态，1表示显示，0表示不显示
      */
-    private Integer show;
+    @TableField("is_show")
+    private Integer isShow;
 
     /**
      * 用于排序的字段
      */
-    private Integer order;
+    @TableField("sort")
+    private Integer sort;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

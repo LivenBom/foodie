@@ -53,7 +53,7 @@
         ON
             c.id = n.category_id
         WHERE
-            c.`show` = 1
+            c.`is_show` = 1
         ORDER BY
             c.`sort` DESC, n.`sort` DESC, n.id ASC
     </select>
