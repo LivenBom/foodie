@@ -45,7 +45,7 @@
             n.id as columnId,
             n.name as columnName,
             n.icon as columnIcon,
-            n.collapase_enable as collapseEnable
+            n.collapse_enable as collapseEnable
         FROM
             post_category c
         LEFT JOIN

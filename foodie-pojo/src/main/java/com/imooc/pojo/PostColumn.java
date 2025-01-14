@@ -17,7 +17,7 @@ public class PostColumn implements Serializable {
     /**
      * 专栏id
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Integer id;
 
     /**
@@ -38,7 +38,13 @@ public class PostColumn implements Serializable {
     /**
      * 是否可折叠（0,全部展示； 1，可以折叠显示）
      */
-    private Integer collapaseEnable;
+    @TableField("collapse_enable")
+    private Integer collapseEnable;
+
+    /**
+     * 排序字段
+     */
+    private Integer sort;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

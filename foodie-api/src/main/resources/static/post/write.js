@@ -23,11 +23,11 @@ new Vue({
             postForm: {
                 title: '',
                 content: '',
-                categoryId: '',
+                categoryId: null,  
                 categoryName: '',
-                columnId: '',
+                columnId: null,    
                 columnName: '',
-                topicId: '',
+                topicId: null,     
                 topicTitle: '',
                 isPaid: false
             },
@@ -56,7 +56,19 @@ new Vue({
                 form: {
                     name: ''
                 }
-            }
+            },
+            addCategoryDialogVisible: false,
+            addColumnDialogVisible: false,
+            newCategory: {
+                name: ''
+            },
+            newColumn: {
+                name: '',
+                categoryId: null,  
+                categoryName: '',
+                icon: '',
+                collapseEnable: 0  
+            },
         }
     },
     mounted() {
@@ -88,45 +100,59 @@ new Vue({
             this.editor = editor;
         },
         loadCategories() {
-            axios.get('/post/categories')
-                .then(response => {
-                    if (response.data.status === 200) {
-                        this.categories = response.data.data;
+            return axios.get('/post/categories')
+                .then(res => {
+                    if (res.data.status === 200) {
+                        this.categories = res.data.data;
                     } else {
-                        this.$message.error(response.data.msg || '获取分类失败');
+                        this.$message.error(res.data.msg || '获取分类列表失败');
+                        return Promise.reject(new Error('获取分类列表失败'));
                     }
                 })
-                .catch(error => {
-                    console.error('获取分类失败:', error);
-                    this.$message.error('获取分类失败');
+                .catch(err => {
+                    console.error('获取分类列表失败:', err);
+                    this.$message.error('获取分类列表失败，请重试');
+                    return Promise.reject(err);
                 });
         },
         handleCategoryChange(categoryId) {
-            // 重置相关字段
-            this.postForm.columnId = '';
-            this.postForm.columnName = '';
-            this.postForm.topicId = '';
-            this.postForm.topicTitle = '';
-            this.columns = [];
-            this.topics = [];
+            if (!categoryId) {
+                // 重置相关字段
+                this.postForm.columnId = null;
+                this.postForm.columnName = '';
+                this.postForm.topicId = null;
+                this.postForm.topicTitle = '';
+                this.columns = [];
+                this.topics = [];
+                return;
+            }
             
-            // 根据选择的分类获取专栏列表
+            // 根据选中的分类ID获取对应的分类对象
             const category = this.categories.find(c => c.id === categoryId);
             if (category) {
-                this.postForm.categoryName = category.name || category.title;
-                this.columns = category.columns || category.columnList || [];
+                // 更新分类名称
+                this.postForm.categoryName = category.title;  
+                // 更新专栏列表
+                this.columns = category.columnList || [];  
+                
+                // 重置专栏和主题相关字段
+                this.postForm.columnId = null;
+                this.postForm.columnName = '';
+                this.postForm.topicId = null;
+                this.postForm.topicTitle = '';
+                this.topics = [];
             }
         },
         handleColumnChange(columnId) {
             // 重置主题相关字段
-            this.postForm.topicId = '';
+            this.postForm.topicId = null;
             this.postForm.topicTitle = '';
             this.topics = [];
             
             // 保存选中的专栏名称
             const column = this.columns.find(c => c.id === columnId);
             if (column) {
-                this.postForm.columnName = column.name || column.title;
+                this.postForm.columnName = column.title;  
             }
             
             // 获取主题列表
@@ -149,7 +175,7 @@ new Vue({
             // 保存选中的主题标题
             const topic = this.topics.find(t => t.id === topicId);
             if (topic) {
-                this.postForm.topicTitle = topic.name || topic.title;
+                this.postForm.topicTitle = topic.title;  
             }
         },
         // 显示添加分类对话框
@@ -181,6 +207,93 @@ new Vue({
                 console.error('添加分类失败:', error);
                 this.$message.error('添加分类失败');
             });
+        },
+        // 显示添加专栏对话框
+        showAddColumnDialog() {
+            if (!this.postForm.categoryId) {
+                this.$message.warning('请先选择分类');
+                return;
+            }
+            // 重置表单
+            this.newColumn = {
+                name: '',
+                categoryId: this.postForm.categoryId,  
+                categoryName: this.postForm.categoryName, 
+                icon: '',
+                collapseEnable: 0
+            };
+            this.addColumnDialogVisible = true;
+        },
+
+        // 提交新专栏
+        submitNewColumn() {
+            if (!this.newColumn.name) {
+                this.$message.error('请输入专栏名称');
+                return;
+            }
+            if (!this.newColumn.categoryId) {
+                this.$message.error('请选择所属分类');
+                return;
+            }
+
+            // 确保数据类型正确
+            const submitData = {
+                name: this.newColumn.name,
+                categoryId: parseInt(this.newColumn.categoryId),
+                icon: this.newColumn.icon || '',
+                collapseEnable: parseInt(this.newColumn.collapseEnable)
+            };
+
+            // 发送请求创建新专栏
+            axios.post('/post/column/create', submitData)
+                .then(res => {
+                    if (res.data.status === 200) {
+                        this.$message.success('专栏创建成功');
+                        this.addColumnDialogVisible = false;
+                        
+                        // 保存新创建的专栏名称和当前分类ID
+                        const newColumnName = this.newColumn.name;
+                        const currentCategoryId = this.postForm.categoryId;
+                        
+                        // 重置表单
+                        this.newColumn = {
+                            name: '',
+                            categoryId: null,
+                            categoryName: '',
+                            icon: '',
+                            collapseEnable: 0
+                        };
+                        
+                        // 刷新分类列表
+                        return this.loadCategories()
+                            .then(() => {
+                                // 重新触发分类选择，以刷新专栏列表
+                                this.handleCategoryChange(currentCategoryId);
+                                
+                                // 在列表刷新后，找到新创建的专栏并选中它
+                                const category = this.categories.find(c => c.id === currentCategoryId);
+                                if (category && category.columnList) {
+                                    const newColumn = category.columnList.find(col => col.title === newColumnName);
+                                    if (newColumn) {
+                                        // 选中新创建的专栏
+                                        this.postForm.columnId = newColumn.id;
+                                        this.postForm.columnName = newColumn.title;
+                                        this.handleColumnChange(newColumn.id);
+                                    }
+                                }
+                            })
+                            .catch(err => {
+                                console.error('刷新分类列表失败:', err);
+                                this.$message.warning('专栏创建成功，但刷新列表失败，请手动刷新页面');
+                            });
+                    } else {
+                        this.$message.error(res.data.msg || '创建失败');
+                    }
+                })
+                .catch(err => {
+                    console.error('创建专栏失败:', err);
+                    this.$message.error('创建专栏失败，请重试');
+                });
         },
         submitPost() {
             this.$refs.postForm.validate((valid) => {
