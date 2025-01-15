@@ -42,6 +42,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/post/write/create/**",
                 "/post/category/**",    // 添加分类管理接口
                 "/post/**",                  // 允许访问所有静态资源
+                "/app/**",              // 添加App相关接口
                 "/swagger-ui/**",
                 "/swagger-resources/**",
                 "/v3/api-docs/**",

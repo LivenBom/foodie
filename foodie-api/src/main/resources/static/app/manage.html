@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App管理</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        .app-container {
+            padding: 20px;
+        }
+        .toolbar {
+            margin-bottom: 20px;
+        }
+        .version-list {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- App列表 -->
+        <el-card>
+            <div slot="header">
+                <span>App列表</span>
+                <el-button style="float: right; margin-left: 10px" type="primary" size="small" @click="showAddAppDialog">添加App</el-button>
+            </div>
+
+            <el-table :data="appList" border style="width: 100%">
+                <el-table-column prop="appName" label="App名称"></el-table-column>
+                <el-table-column prop="appKey" label="App标识"></el-table-column>
+                <el-table-column prop="packageName" label="包名"></el-table-column>
+                <el-table-column prop="platform" label="平台">
+                    <template slot-scope="scope">
+                        {{ scope.row.platform === 1 ? 'Android' : 'iOS' }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="status" label="状态">
+                    <template slot-scope="scope">
+                        <el-tag :type="scope.row.status === 1 ? 'success' : 'danger'">
+                            {{ scope.row.status === 1 ? '启用' : '禁用' }}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" width="250">
+                    <template slot-scope="scope">
+                        <el-button size="mini" @click="showEditAppDialog(scope.row)">编辑</el-button>
+                        <el-button size="mini" type="success" @click="showAddVersionDialog(scope.row)">添加版本</el-button>
+                        <el-button size="mini" type="primary" @click="showVersionList(scope.row)">版本列表</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-card>
+
+        <!-- 版本列表 -->
+        <el-dialog :title="currentApp ? currentApp.appName + ' - 版本列表' : '版本列表'" :visible.sync="versionListVisible" width="70%">
+            <el-table :data="versionList" border style="width: 100%">
+                <el-table-column prop="versionName" label="版本名称"></el-table-column>
+                <el-table-column prop="versionCode" label="版本号"></el-table-column>
+                <el-table-column prop="forceUpdate" label="强制更新">
+                    <template slot-scope="scope">
+                        <el-tag :type="scope.row.forceUpdate === 1 ? 'danger' : 'info'">
+                            {{ scope.row.forceUpdate === 1 ? '是' : '否' }}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="updateContent" label="更新内容"></el-table-column>
+                <el-table-column prop="downloadUrl" label="下载地址" width="200">
+                    <template slot-scope="scope">
+                        <el-link type="primary" :href="scope.row.downloadUrl" target="_blank">{{ scope.row.downloadUrl }}</el-link>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="createdTime" label="创建时间" width="180"></el-table-column>
+            </el-table>
+        </el-dialog>
+
+        <!-- 添加/编辑App对话框 -->
+        <el-dialog :title="editingApp.id ? '编辑App' : '添加App'" :visible.sync="appDialogVisible">
+            <el-form :model="editingApp" :rules="appRules" ref="appForm" label-width="100px">
+                <el-form-item label="App名称" prop="appName">
+                    <el-input v-model="editingApp.appName"></el-input>
+                </el-form-item>
+                <el-form-item label="App标识" prop="appKey">
+                    <el-input v-model="editingApp.appKey" :disabled="!!editingApp.id"></el-input>
+                </el-form-item>
+                <el-form-item label="包名" prop="packageName">
+                    <el-input v-model="editingApp.packageName"></el-input>
+                </el-form-item>
+                <el-form-item label="平台" prop="platform">
+                    <el-select v-model="editingApp.platform" style="width: 100%">
+                        <el-option label="Android" :value="1"></el-option>
+                        <el-option label="iOS" :value="2"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="状态" prop="status">
+                    <el-switch v-model="editingApp.status" :active-value="1" :inactive-value="0"></el-switch>
+                </el-form-item>
+                <el-form-item label="描述" prop="description">
+                    <el-input type="textarea" v-model="editingApp.description"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="appDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="submitApp">确 定</el-button>
+            </div>
+        </el-dialog>
+
+        <!-- 添加版本对话框 -->
+        <el-dialog :title="'添加版本 - ' + (currentApp ? currentApp.appName : '')" :visible.sync="versionDialogVisible">
+            <el-form :model="newVersion" :rules="versionRules" ref="versionForm" label-width="100px">
+                <el-form-item label="版本名称" prop="versionName">
+                    <el-input v-model="newVersion.versionName" placeholder="如：1.0.0"></el-input>
+                </el-form-item>
+                <el-form-item label="版本号" prop="versionCode">
+                    <el-input-number v-model="newVersion.versionCode" :min="1"></el-input-number>
+                </el-form-item>
+                <el-form-item label="强制更新" prop="forceUpdate">
+                    <el-switch v-model="newVersion.forceUpdate" :active-value="1" :inactive-value="0"></el-switch>
+                </el-form-item>
+                <el-form-item label="更新内容" prop="updateContent">
+                    <el-input type="textarea" v-model="newVersion.updateContent" rows="4" placeholder="请输入更新内容，支持换行"></el-input>
+                </el-form-item>
+                <el-form-item label="下载地址">
+                    <el-input v-model="newVersion.downloadUrl" placeholder="请输入下载地址（选填）"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="versionDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="submitVersion">确 定</el-button>
+            </div>
+        </el-dialog>
+    </div>
+
+    <!-- 引入Vue和Element UI -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="manage.js"></script>
+</body>
+</html>
