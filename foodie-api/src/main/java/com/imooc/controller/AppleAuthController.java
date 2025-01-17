@@ -6,6 +6,7 @@ import com.imooc.pojo.Users;
 import com.imooc.pojo.bo.AppleUserBO;
 import com.imooc.pojo.dto.AppleLoginRequest;
 import com.imooc.service.AppleAuthService;
+import com.imooc.utils.RedisOperator;
 import com.imooc.service.UsersService;
 import com.imooc.utils.IMOOCJSONResult;
 import com.imooc.utils.JwtUtils;
@@ -33,6 +34,9 @@ public class AppleAuthController {
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    @Autowired
+    private RedisOperator redisOperator;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -108,6 +112,10 @@ public class AppleAuthController {
             try {
                 String accessToken = jwtUtils.generateAccessToken(user.getId());
                 String refreshToken = jwtUtils.generateRefreshToken(user.getId());
+
+                // 保存 token 到 Redis
+                redisOperator.setUserToken(user.getId(), accessToken);
+                redisOperator.setUserRefreshToken(user.getId(), refreshToken);
 
                 // 构造返回结果
                 Map<String, Object> result = new HashMap<>();
@@ -197,6 +205,10 @@ public class AppleAuthController {
             try {
                 String accessToken = jwtUtils.generateAccessToken(user.getId());
                 String refreshToken = jwtUtils.generateRefreshToken(user.getId());
+
+                // 保存 token 到 Redis
+                redisOperator.setUserToken(user.getId(), accessToken);
+                redisOperator.setUserRefreshToken(user.getId(), refreshToken);
 
                 // 构造返回结果
                 Map<String, Object> result = new HashMap<>();
