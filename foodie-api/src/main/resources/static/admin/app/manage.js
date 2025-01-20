@@ -1,3 +1,27 @@
+// 配置 axios 请求拦截器
+axios.interceptors.request.use(config => {
+    const token = localStorage.getItem('adminToken');
+    if (token) {
+        config.headers['Admin-Token'] = token;
+    }
+    return config;
+}, error => {
+    return Promise.reject(error);
+});
+
+// 配置 axios 响应拦截器
+axios.interceptors.response.use(response => {
+    return response;
+}, error => {
+    if (error.response && error.response.status === 401) {
+        // 如果返回 401，说明 token 已失效，跳转到登录页
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminUser');
+        window.location.href = '/admin/login.html';
+    }
+    return Promise.reject(error);
+});
+
 new Vue({
     el: '#app',
     data() {

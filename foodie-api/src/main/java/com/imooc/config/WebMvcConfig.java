@@ -1,13 +1,14 @@
 package com.imooc.config;
 
 import com.imooc.interceptor.LoginInterceptor;
+import com.imooc.interceptor.AdminInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
@@ -15,8 +16,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Autowired
     private LoginInterceptor loginInterceptor;
-
-    // Removed redundant RestTemplate bean definition
+    
+    @Autowired
+    private AdminInterceptor adminInterceptor;
 
     // 实现静态资源的映射
     @Override
@@ -29,35 +31,42 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        List<String> excludePaths = Arrays.asList(
-                "/passport/login",
-                "/passport/logout",
-                "/passport/regist",
-                "/passport/usernameIsExist",
-                "/auth/apple/login",     // 添加Apple登录路径
-                "/auth/apple/callback",  // 添加Apple回调路径
-                "/error",               // 添加错误页面路径
-                "/post/categories/**",
-                "/post/topics/**",
-                "/post/write/create/**",
-                "/post/category/**",    // 添加分类管理接口
-                "/app/**",              // 添加App相关接口
-                "/swagger-ui/**",
-                "/swagger-resources/**",
-                "/v3/api-docs/**",
-                "/**/*.css",
-                "/**/*.js",
-                "/**/*.png",
-                "/**/*.jpg",
-                "/**/*.jpeg",
-                "/**/*.gif",
-                "/**/*.svg",
-                "/**/*.ico",
-                "/**/*.html"
-        );
-
+        // 普通用户拦截器，排除管理后台相关路径
         registry.addInterceptor(loginInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns(excludePaths);
+                .addPathPatterns("/api/**")  // 只拦截API请求
+                .excludePathPatterns(
+                    "/admin/**",           // 排除管理后台的所有路径
+                    "/passport/login",
+                    "/passport/logout",
+                    "/passport/regist",
+                    "/passport/usernameIsExist",
+                    "/error"
+                );
+
+        // 管理后台拦截器
+        List<String> excludePatterns = new ArrayList<>();
+        // 登录相关
+        excludePatterns.add("/admin/login");
+        excludePatterns.add("/admin/login.html");
+        // 静态资源
+        excludePatterns.add("/admin/static/**");
+        excludePatterns.add("/admin/assets/**");
+        excludePatterns.add("/admin/**/*.html");
+        excludePatterns.add("/admin/**/*.js");
+        excludePatterns.add("/admin/**/*.css");
+        excludePatterns.add("/admin/**/*.png");
+        excludePatterns.add("/admin/**/*.jpg");
+        excludePatterns.add("/admin/**/*.jpeg");
+        excludePatterns.add("/admin/**/*.gif");
+        excludePatterns.add("/admin/**/*.svg");
+        excludePatterns.add("/admin/**/*.ico");
+        excludePatterns.add("/admin/**/*.woff");
+        excludePatterns.add("/admin/**/*.woff2");
+        excludePatterns.add("/admin/**/*.ttf");
+        excludePatterns.add("/admin/**/*.eot");
+        
+        registry.addInterceptor(adminInterceptor)
+                .addPathPatterns("/admin/**", "/order/**")
+                .excludePathPatterns(excludePatterns);
     }
 }

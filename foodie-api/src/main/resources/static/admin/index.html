@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>统一管理后台</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+        .app-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background-color: #409EFF;
+            color: white;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+        }
+        .main-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #304156;
+            padding-top: 20px;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .el-menu {
+            border-right: none;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- 顶部导航栏 -->
+        <div class="header">
+            <div class="logo">统一管理后台</div>
+            <div class="user-info">
+                <span>{{ username }}</span>
+                <el-button type="text" style="color: white; margin-left: 15px" @click="handleLogout">退出</el-button>
+            </div>
+        </div>
+        
+        <!-- 主容器 -->
+        <div class="main-container">
+            <!-- 侧边栏 -->
+            <div class="sidebar">
+                <el-menu
+                    :default-active="activeMenu"
+                    background-color="#304156"
+                    text-color="#fff"
+                    active-text-color="#409EFF"
+                    @select="handleMenuSelect">
+                    
+                    <el-menu-item index="app">
+                        <i class="el-icon-mobile-phone"></i>
+                        <span>App管理</span>
+                    </el-menu-item>
+                    
+                    <el-menu-item index="iap">
+                        <i class="el-icon-shopping-cart-2"></i>
+                        <span>内购订单管理</span>
+                    </el-menu-item>
+
+                    <el-menu-item index="post">
+                        <i class="el-icon-edit-outline"></i>
+                        <span>文章发布</span>
+                    </el-menu-item>
+                </el-menu>
+            </div>
+            
+            <!-- 内容区域 -->
+            <div class="content">
+                <iframe :src="currentPage" ref="iframe"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                username: '',
+                activeMenu: 'app',
+                pages: {
+                    app: '/admin/app/manage.html',
+                    iap: '/admin/order/manage.html',
+                    post: '/admin/post/write.html'
+                }
+            },
+            computed: {
+                currentPage() {
+                    return this.pages[this.activeMenu];
+                }
+            },
+            methods: {
+                handleMenuSelect(index) {
+                    this.activeMenu = index;
+                },
+                handleLogout() {
+                    const token = localStorage.getItem('adminToken');
+                    if (!token) {
+                        window.location.href = '/admin/login.html';
+                        return;
+                    }
+
+                    axios.post('/admin/logout')
+                        .then(res => {
+                            if (res.data.status === 200) {
+                                localStorage.removeItem('adminToken');
+                                localStorage.removeItem('adminUser');
+                                window.location.href = '/admin/login.html';
+                            } else {
+                                this.$message.error(res.data.msg || '退出失败');
+                            }
+                        })
+                        .catch(() => {
+                            this.$message.error('退出失败');
+                        });
+                },
+                checkAuth() {
+                    const token = localStorage.getItem('adminToken');
+                    if (!token) {
+                        console.error('未找到token，重定向到登录页');
+                        window.location.replace('/admin/login.html');
+                        return;
+                    }
+
+                    // 设置全局token
+                    axios.defaults.headers.common['Admin-Token'] = token;
+
+                    // 验证token
+                    axios.get('/admin/info')
+                        .then(res => {
+                            if (res.data.status === 200) {
+                                console.log('token验证成功');
+                                this.username = res.data.data.nickname || res.data.data.username;
+                            } else {
+                                console.error('token验证失败:', res.data.msg);
+                                this.$message.error(res.data.msg);
+                                window.location.replace('/admin/login.html');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('token验证请求失败:', error);
+                            this.$message.error('验证失败，请重新登录');
+                            window.location.replace('/admin/login.html');
+                        });
+                }
+            },
+            mounted() {
+                console.log('管理页面加载完成，开始验证身份');
+                this.checkAuth();
+            }
+        })
+    </script>
+</body>
+</html>

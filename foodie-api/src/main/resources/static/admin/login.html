@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - 登录</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-container {
+            width: 400px;
+            padding: 30px;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1);
+        }
+        .login-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #409EFF;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="login-container">
+            <div class="login-title">管理后台</div>
+            <el-form :model="loginForm" :rules="rules" ref="loginForm">
+                <el-form-item prop="username">
+                    <el-input 
+                        v-model="loginForm.username" 
+                        prefix-icon="el-icon-user"
+                        placeholder="用户名">
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="password">
+                    <el-input 
+                        v-model="loginForm.password" 
+                        prefix-icon="el-icon-lock"
+                        type="password"
+                        placeholder="密码">
+                    </el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" style="width: 100%" @click="handleLogin">登录</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // 配置 axios
+        axios.interceptors.request.use(config => {
+            const token = localStorage.getItem('adminToken');
+            if (token) {
+                config.headers['Admin-Token'] = token;
+            }
+            return config;
+        }, error => {
+            return Promise.reject(error);
+        });
+
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    loginForm: {
+                        username: '',
+                        password: ''
+                    },
+                    rules: {
+                        username: [
+                            { required: true, message: '请输入用户名', trigger: 'blur' }
+                        ],
+                        password: [
+                            { required: true, message: '请输入密码', trigger: 'blur' }
+                        ]
+                    }
+                }
+            },
+            methods: {
+                handleLogin() {
+                    this.$refs.loginForm.validate(valid => {
+                        if (valid) {
+                            console.log('开始登录请求');
+                            axios.post('/admin/login', this.loginForm)
+                                .then(res => {
+                                    console.log('登录响应:', res.data);
+                                    if (res.data.status === 200) {
+                                        const { token, user } = res.data.data;
+                                        console.log('登录成功, token:', token);
+                                        localStorage.setItem('adminToken', token);
+                                        localStorage.setItem('adminUser', JSON.stringify(user));
+                                        this.$message.success('登录成功');
+                                        console.log('准备跳转到:', window.location.origin + '/admin/index.html');
+                                        window.location.replace('/admin/index.html');
+                                    } else {
+                                        console.error('登录失败:', res.data.msg);
+                                        this.$message.error(res.data.msg || '登录失败');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('登录请求失败:', error);
+                                    this.$message.error('登录失败，请稍后重试');
+                                });
+                        }
+                    });
+                }
+            },
+            mounted() {
+                console.log('登录页面加载完成');
+                // 清除可能存在的无效token
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUser');
+            }
+        });
+    </script>
+</body>
+</html>

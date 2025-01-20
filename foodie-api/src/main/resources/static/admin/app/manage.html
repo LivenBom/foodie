@@ -136,6 +136,170 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="manage.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                appList: [],
+                versionList: [],
+                currentApp: null,
+                appDialogVisible: false,
+                versionDialogVisible: false,
+                versionListVisible: false,
+                editingApp: {
+                    appName: '',
+                    appKey: '',
+                    packageName: '',
+                    platform: 1,
+                    status: 1,
+                    description: ''
+                },
+                newVersion: {
+                    versionName: '',
+                    versionCode: 1,
+                    forceUpdate: 0,
+                    updateContent: '',
+                    downloadUrl: ''
+                },
+                appRules: {
+                    appName: [{ required: true, message: '请输入App名称', trigger: 'blur' }],
+                    appKey: [{ required: true, message: '请输入App标识', trigger: 'blur' }],
+                    packageName: [{ required: true, message: '请输入包名', trigger: 'blur' }],
+                    platform: [{ required: true, message: '请选择平台', trigger: 'change' }]
+                },
+                versionRules: {
+                    versionName: [{ required: true, message: '请输入版本名称', trigger: 'blur' }],
+                    versionCode: [{ required: true, message: '请输入版本号', trigger: 'blur' }],
+                    updateContent: [{ required: true, message: '请输入更新内容', trigger: 'blur' }]
+                }
+            },
+            mounted() {
+                this.checkAuth();
+            },
+            methods: {
+                checkAuth() {
+                    const token = localStorage.getItem('adminToken');
+                    if (!token) {
+                        window.parent.location.href = '/admin/login.html';
+                        return;
+                    }
+                    // 设置token
+                    axios.defaults.headers.common['Admin-Token'] = token;
+                    
+                    // 验证token
+                    axios.get('/admin/info')
+                        .then(res => {
+                            if (res.data.status === 200) {
+                                console.log('token验证成功');
+                                this.fetchAppList();
+                            } else {
+                                console.error('token验证失败:', res.data.msg);
+                                window.parent.location.href = '/admin/login.html';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('token验证请求失败:', error);
+                            window.parent.location.href = '/admin/login.html';
+                        });
+                },
+                fetchAppList() {
+                    axios.get('/app/list')
+                        .then(res => {
+                            if (res.data.status === 200) {
+                                this.appList = res.data.data;
+                            } else {
+                                this.$message.error(res.data.msg || '获取App列表失败');
+                            }
+                        })
+                        .catch(() => {
+                            this.$message.error('获取App列表失败');
+                        });
+                },
+                showAddAppDialog() {
+                    this.editingApp = {
+                        appName: '',
+                        appKey: '',
+                        packageName: '',
+                        platform: 1,
+                        status: 1,
+                        description: ''
+                    };
+                    this.appDialogVisible = true;
+                },
+                showEditAppDialog(app) {
+                    this.editingApp = { ...app };
+                    this.appDialogVisible = true;
+                },
+                submitApp() {
+                    this.$refs.appForm.validate(valid => {
+                        if (valid) {
+                            const url = this.editingApp.id ? '/app/update' : '/app/add';
+                            axios.post(url, this.editingApp)
+                                .then(res => {
+                                    if (res.data.status === 200) {
+                                        this.$message.success('保存成功');
+                                        this.appDialogVisible = false;
+                                        this.fetchAppList();
+                                    } else {
+                                        this.$message.error(res.data.msg || '保存失败');
+                                    }
+                                })
+                                .catch(() => {
+                                    this.$message.error('保存失败');
+                                });
+                        }
+                    });
+                },
+                showAddVersionDialog(app) {
+                    this.currentApp = app;
+                    this.newVersion = {
+                        appId: app.id,
+                        versionName: '',
+                        versionCode: 1,
+                        forceUpdate: 0,
+                        updateContent: '',
+                        downloadUrl: ''
+                    };
+                    this.versionDialogVisible = true;
+                },
+                submitVersion() {
+                    this.$refs.versionForm.validate(valid => {
+                        if (valid) {
+                            axios.post('/app/version/add', this.newVersion)
+                                .then(res => {
+                                    if (res.data.status === 200) {
+                                        this.$message.success('添加版本成功');
+                                        this.versionDialogVisible = false;
+                                        if (this.versionListVisible) {
+                                            this.showVersionList(this.currentApp);
+                                        }
+                                    } else {
+                                        this.$message.error(res.data.msg || '添加版本失败');
+                                    }
+                                })
+                                .catch(() => {
+                                    this.$message.error('添加版本失败');
+                                });
+                        }
+                    });
+                },
+                showVersionList(app) {
+                    this.currentApp = app;
+                    this.versionListVisible = true;
+                    axios.get('/app/version/list', { params: { appKey: app.appKey } })
+                        .then(res => {
+                            if (res.data.status === 200) {
+                                this.versionList = res.data.data;
+                            } else {
+                                this.$message.error(res.data.msg || '获取版本列表失败');
+                            }
+                        })
+                        .catch(() => {
+                            this.$message.error('获取版本列表失败');
+                        });
+                }
+            }
+        });
+    </script>
 </body>
 </html>

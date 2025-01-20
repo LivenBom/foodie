@@ -5,14 +5,16 @@ import com.baomidou.mybatisplus.annotation.*;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.imooc.enums.OrderStatus;
 import com.imooc.enums.YesOrNo;
+import com.imooc.handler.OrderStatusTypeHandler;
 import lombok.Data;
 
 /**
  * 订单表;
- * @TableName orders
+ * @TableName iap_orders
  */
-@TableName(value ="orders")
+@TableName(value ="iap_orders")
 @Data
 public class Orders implements Serializable {
     /**
@@ -92,6 +94,12 @@ public class Orders implements Serializable {
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updatedTime;
+
+    /**
+     * 订单状态 10:待付款 20:已付款，待发货 30:已发货，待收货 40:交易成功 50:交易关闭
+     */
+    @TableField(typeHandler = OrderStatusTypeHandler.class)
+    private OrderStatus status;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

@@ -23,6 +23,14 @@ spring:
     multipart:
       max-file-size: 51200            # 限制上传文件大小（500kb）
       max-request-size: 51200         # 限制请求大小（500kb）
+  # Flyway 配置
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    baseline-version: 1.0
+    validate-on-migrate: true
+    clean-disabled: true
 
 ################################################################
 #

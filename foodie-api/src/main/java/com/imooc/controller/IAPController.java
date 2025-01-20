@@ -7,9 +7,12 @@ import com.imooc.utils.IMOOCJSONResult;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tags({ @Tag(name = "内购") })
@@ -29,5 +32,20 @@ public class IAPController {
         } else {
             return IMOOCJSONResult.errorMsg("Receipt verification failed with status: " + result.getStatus());
         }
+    }
+
+    @GetMapping("/orders")
+    public IMOOCJSONResult queryOrders(
+            @RequestParam(required = false) String transactionId,
+            @RequestParam(required = false) String productId,
+            @RequestParam(required = false) String environment,
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize) {
+        return IMOOCJSONResult.ok(iapService.queryIAPOrders(transactionId, productId, environment, pageNum, pageSize));
+    }
+
+    @GetMapping("/orders/{transactionId}")
+    public IMOOCJSONResult getOrder(@PathVariable String transactionId) {
+        return IMOOCJSONResult.ok(iapService.getIAPOrderByTransactionId(transactionId));
     }
 }
