@@ -85,3 +85,24 @@ apple:
       WRFkFjZt
       -----END PRIVATE KEY-----
     redirect-uri: ${server.scheme:https}://${server.domain:localhost:8088}/auth/apple/callback
+
+################################################################
+#
+# App Store Configuration
+#
+################################################################
+app-store:
+  private-key: |
+    -----BEGIN PRIVATE KEY-----
+    MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgz0bXzEjXD3uo82vt
+    aiIGK089I0bEFDvuecK1wD34nxSgCgYIKoZIzj0DAQehRANCAASuytgU02+f9jPH
+    9E42f4DN/TkcgF5SrJc49z6iX7bJwzzuXldcLG8W5eGiQpqXpfHjn2TgozqNC8FR
+    fEznh6W4
+    -----END PRIVATE KEY-----
+  key-id: 7GWBVVUZ8G
+  issuer-id: c79064be-c9b4-47fc-be22-2bd623fd69f8
+  bundle-id: com.rise.liven.SwiftTeam
+  environment: false  # 默认使用沙盒环境
+  app-apple-id: 6581484651  # App 在 Apple 系统中的 ID
+  root-certificate-paths:  # 根证书文件路径列表
+    - "classpath:certs/apple/AppleRootCA-G3.cer"  # Apple 根证书
