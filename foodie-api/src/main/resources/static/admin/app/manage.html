@@ -245,7 +245,7 @@
                 submitApp() {
                     this.$refs.appForm.validate(valid => {
                         if (valid) {
-                            const url = this.editingApp.id ? '/app/update' : '/app/add';
+                            const url = this.editingApp.id ? '/app/update' : '/app/create';
                             axios.post(url, this.editingApp)
                                 .then(res => {
                                     if (res.data.status === 200) {
