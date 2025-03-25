@@ -30,44 +30,47 @@ public class AdminInterceptor implements HandlerInterceptor {
         String requestURI = request.getRequestURI();
         log.info("AdminInterceptor - 拦截请求: {}", requestURI);
 
-        // 如果是登录请求，直接放行
-        if (requestURI.contains("/admin/login")) {
-            log.info("AdminInterceptor - 登录请求，放行");
-            return true;
-        }
-
-        // 检查管理员Token
-        String token = request.getHeader("Admin-Token");
-        log.info("AdminInterceptor - Token: {}", token);
-        
-        if (token == null || token.isEmpty()) {
-            log.warn("AdminInterceptor - Token为空");
-            // 如果是页面请求，重定向到登录页
-            if (requestURI.endsWith(".html")) {
-                log.info("AdminInterceptor - HTML请求，重定向到登录页");
-                response.sendRedirect("/admin/login.html");
-                return false;
-            }
-            // 如果是API请求，返回JSON错误信息
-            returnErrorResponse(response, IMOOCJSONResult.errorMsg("请先登录"));
-            return false;
-        }
-
-        // 验证token
-        AdminUser adminUser = adminService.getAdminByToken(token);
-        if (adminUser == null) {
-            log.warn("AdminInterceptor - Token无效: {}", token);
-            if (requestURI.endsWith(".html")) {
-                log.info("AdminInterceptor - HTML请求，重定向到登录页");
-                response.sendRedirect("/admin/login.html");
-                return false;
-            }
-            returnErrorResponse(response, IMOOCJSONResult.errorTokenMsg("token已失效，请重新登录"));
-            return false;
-        }
-
-        log.info("AdminInterceptor - Token有效，用户: {}", adminUser.getUsername());
+        // 暂时都不需要登录要求，全部放行
         return true;
+
+//        // 如果是登录请求，直接放行
+//        if (requestURI.contains("/admin/login")) {
+//            log.info("AdminInterceptor - 登录请求，放行");
+//            return true;
+//        }
+//
+//        // 检查管理员Token
+//        String token = request.getHeader("Admin-Token");
+//        log.info("AdminInterceptor - Token: {}", token);
+//
+//        if (token == null || token.isEmpty()) {
+//            log.warn("AdminInterceptor - Token为空");
+//            // 如果是页面请求，重定向到登录页
+//            if (requestURI.endsWith(".html")) {
+//                log.info("AdminInterceptor - HTML请求，重定向到登录页");
+//                response.sendRedirect("/admin/login.html");
+//                return false;
+//            }
+//            // 如果是API请求，返回JSON错误信息
+//            returnErrorResponse(response, IMOOCJSONResult.errorMsg("请先登录"));
+//            return false;
+//        }
+//
+//        // 验证token
+//        AdminUser adminUser = adminService.getAdminByToken(token);
+//        if (adminUser == null) {
+//            log.warn("AdminInterceptor - Token无效: {}", token);
+//            if (requestURI.endsWith(".html")) {
+//                log.info("AdminInterceptor - HTML请求，重定向到登录页");
+//                response.sendRedirect("/admin/login.html");
+//                return false;
+//            }
+//            returnErrorResponse(response, IMOOCJSONResult.errorTokenMsg("token已失效，请重新登录"));
+//            return false;
+//        }
+//
+//        log.info("AdminInterceptor - Token有效，用户: {}", adminUser.getUsername());
+//        return true;
     }
 
     @Override
